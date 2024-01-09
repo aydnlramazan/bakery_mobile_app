@@ -13,13 +13,22 @@ class UserModel extends UserEntity {
           token: token
         );
 
-  factory UserModel.fromJsom(Map<String, dynamic> map) {
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
       id: map["id"] ?? 0,
       name: map["firstName"] ?? "",
       operationClaim: map["operationClaimId"] ?? 0,
       token: map["token"] ?? "",
     );
+  }
+
+    Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'operationClaim': operationClaim,
+      'token': token,
+    };
   }
 
   factory UserModel.fromEntity(UserEntity entity) {

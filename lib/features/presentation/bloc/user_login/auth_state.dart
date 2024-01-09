@@ -1,6 +1,4 @@
-import 'package:bakery_app/features/domain/entities/user.dart';
-import 'package:equatable/equatable.dart';
-import 'package:dio/dio.dart';
+part of 'auth_bloc.dart';
 
 abstract class AuthState extends Equatable {
   final UserEntity? user;

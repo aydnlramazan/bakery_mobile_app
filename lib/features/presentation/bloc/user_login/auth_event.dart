@@ -1,9 +1,12 @@
-import 'package:bakery_app/core/utils/user_login_params.dart';
-import 'package:flutter/material.dart';
+part of 'auth_bloc.dart';
+
+
+
 
 @immutable
 sealed class AuthEvent{}
 
+// ignore: must_be_immutable
 final class AuthLoginRequested extends AuthEvent{
   UserLoginParams userLoginParams;
   AuthLoginRequested({required this.userLoginParams});

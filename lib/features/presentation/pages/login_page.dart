@@ -1,13 +1,15 @@
 import 'package:bakery_app/core/utils/user_login_params.dart';
 import 'package:bakery_app/features/presentation/bloc/user_login/auth_bloc.dart';
-import 'package:bakery_app/features/presentation/bloc/user_login/auth_event.dart';
-import 'package:bakery_app/features/presentation/bloc/user_login/auth_state.dart';
+
+import 'package:bakery_app/features/presentation/pages/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_button.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String routeName = "/auth-page";
   const LoginPage({super.key});
 
   @override
@@ -24,6 +26,8 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, DoughListPage.routeName, (route) => false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -31,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             );
+            
           }
 
           if (state is AuthFailure) {
@@ -41,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             );
+      
           }
         },
         builder: (context, state) {
@@ -60,6 +66,10 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       height: 20,
                     ),
+                    SizedBox(
+                        height: 200,
+                        child: Lottie.asset('assets/bakery.json',
+                            repeat: false, animate: true)),
                     const SizedBox(
                       height: 10,
                     ),

@@ -1,8 +1,10 @@
-import 'package:dio/dio.dart';
 
-final dio = Dio(BaseOptions(
-  baseUrl: "https://192.168.12.73:7207",
-  connectTimeout: const Duration(seconds: 30),
-  receiveTimeout: const Duration(seconds: 30),
-  sendTimeout: const Duration(seconds: 30),
-));
+
+import 'package:intl/intl.dart';
+
+const String  baseUrl= "https://192.168.1.2:7207";
+
+String getFormattedDateTime(DateTime dateTime){
+  return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+}
+

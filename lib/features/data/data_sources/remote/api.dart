@@ -1,3 +1,5 @@
+
+
 import 'package:dio/dio.dart';
 
 class Api {
@@ -14,9 +16,9 @@ class Api {
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 30),
         headers: {
-          'accept': '*/*',
-          'Content-Type': 'application/json; charset=UTF-8',
-        }));
+           'Content-Type': 'application/json; charset=utf-8',
+        }
+       ));
 
     return dio;
   }
@@ -62,7 +64,7 @@ class Api {
 
   Future<Response> post(
     String path, {
-    dynamic data,
+   // dynamic data,
     Map<String, dynamic>? queryParameters ,
     Options? options,
     CancelToken? cancelToken,
@@ -77,12 +79,17 @@ class Api {
     }
     try {
       var response = await dio.post(path,
-          data: FormData.fromMap(data),
+          
           queryParameters: queryParameters,
-          options: options,
+          options: Options(headers: {
+          
+          'Content-Type': 'application/json; charset=utf-8',
+        }),
           cancelToken: cancelToken,
           onReceiveProgress: onReceiveProgress,
-          onSendProgress: onSendProgress);
+          onSendProgress: onSendProgress,
+        
+          );
       print('Response: ${response.data}');
       return response;
     } catch (e) {

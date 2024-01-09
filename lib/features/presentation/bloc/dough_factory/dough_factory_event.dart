@@ -1,8 +1,8 @@
 part of 'dough_factory_bloc.dart';
 
-sealed class DoughFactoryEvent extends Equatable {
-  const DoughFactoryEvent();
+sealed class DoughFactoryEvent {}
 
-  @override
-  List<Object> get props => [];
+final class DoughListsRequested extends DoughFactoryEvent {
+  DateTime dateTime;
+  DoughListsRequested({required this.dateTime});
 }
