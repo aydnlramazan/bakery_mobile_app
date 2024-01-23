@@ -4,7 +4,7 @@ class CircularTextBackground extends StatelessWidget {
   final String text;
   final Color backgroundColor;
 
-   CircularTextBackground({required this.text, required this.backgroundColor});
+   const CircularTextBackground({super.key, required this.text, required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {

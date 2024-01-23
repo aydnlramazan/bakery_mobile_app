@@ -8,15 +8,15 @@ class DoughProductModel extends DoughProductEntity {
 
   factory DoughProductModel.fromJson(Map<String, dynamic> map) {
     return DoughProductModel(
-      id: map["id"] ?? 0,
-      name: map["name"] ?? "",
+      id: map["doughFactoryProductId"] ?? 0,
+      name: map["doughFactoryProductName"] ?? "",
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'name': name,
+      'doughFactoryProductId': id,
+      'doughFactoryProductName': name,
     };
   }
 

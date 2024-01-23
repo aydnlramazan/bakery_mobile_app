@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:dio/dio.dart';
 
 abstract class DataState<T> {
@@ -13,4 +15,5 @@ class DataSuccess<T> extends DataState<T> {
 
 class DataFailed<T> extends DataState<T> {
   const DataFailed(DioException error) : super(error: error);
+  
 }

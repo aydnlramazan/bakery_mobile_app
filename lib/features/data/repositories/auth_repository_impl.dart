@@ -1,7 +1,9 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 
 import 'package:bakery_app/core/resources/data_state.dart';
-import 'package:bakery_app/core/utils/shared_preference.dart';
+import 'package:bakery_app/features/data/data_sources/local/shared_preference.dart';
 import 'package:bakery_app/core/utils/user_login_params.dart';
 import 'package:bakery_app/features/data/data_sources/remote/auth_service.dart';
 
@@ -17,12 +19,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<DataState<UserEntity>> userLogin(
       UserLoginParams? userLoginParams) async {
     try {
-      print("Auth repo impl called userName: ${userLoginParams!.userName}");
+   
       final httpResponse = await _authApiService.loginUser(
-          userName: userLoginParams.userName,
+          userName: userLoginParams!.userName,
           password: userLoginParams.password);
-      //final httpResponse = await Api().post("/api/Auth/login",queryParameters: {'userName':userLoginParams!.userName,'password':userLoginParams.password}, addRequestInterceptor: false) ;
-      print("Status Code: ${httpResponse.response.statusCode}");
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         UserPreferences.saveUser(httpResponse.data);
         return DataSuccess(httpResponse.data);
@@ -35,7 +35,6 @@ class AuthRepositoryImpl implements AuthRepository {
         );
       }
     } catch (e) {
-      print('Dio Error: $e');
       throw e;
     }
   }

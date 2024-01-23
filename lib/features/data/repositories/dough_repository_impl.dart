@@ -1,12 +1,14 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 
 import 'package:bakery_app/core/resources/data_state.dart';
 import 'package:bakery_app/features/data/data_sources/remote/dough_service.dart';
 import 'package:bakery_app/features/data/models/dough_list.dart';
-import 'package:bakery_app/features/data/models/dough_list_product.dart';
+import 'package:bakery_app/features/data/models/dough_product_to_add.dart';
 import 'package:bakery_app/features/data/models/dough_product.dart';
 import 'package:bakery_app/features/domain/entities/added_dough_list_product.dart';
-import 'package:bakery_app/features/domain/entities/dough_list_product.dart';
+import 'package:bakery_app/features/domain/entities/dough_product_to_add.dart';
 import 'package:dio/dio.dart';
 import 'package:bakery_app/features/domain/repositories/dough_repository.dart';
 
@@ -40,7 +42,7 @@ class DoughRepositoryImpl extends DoughRepository {
       final httpResponse =
           await _doughApiService.getAvailableProductsByListId(listId: listId);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return DataSuccess(httpResponse.data as List<DoughProductModel>);
+        return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
           DioException(
@@ -58,11 +60,11 @@ class DoughRepositoryImpl extends DoughRepository {
   Future<DataState<List<AddedDoughListProductEntity>>>
       getDoughListProductsByListId(int listId) async {
     try {
-      final httpResponse =
-          await _doughApiService.getAddedProductsByListId(listId: listId);
+      final httpResponse = await _doughApiService.getAddedProductsByListId(
+          doughFactoryListId: listId);
+
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return DataSuccess(
-            httpResponse.data as List<AddedDoughListProductEntity>);
+        return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
           DioException(
@@ -82,7 +84,7 @@ class DoughRepositoryImpl extends DoughRepository {
     try {
       final httpResponse = await _doughApiService.getListsByDate(date: date);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return DataSuccess(httpResponse.data as List<DoughListModel>);
+        return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
           DioException(
@@ -98,10 +100,10 @@ class DoughRepositoryImpl extends DoughRepository {
 
   @override
   Future<DataState<void>> updateDoughProduct(
-      DoughListProductEntity doughProduct) async {
+      DoughProductToAddEntity doughProduct) async {
     try {
       final httpResponse = await _doughApiService.updateProductFromList(
-          doughListProduct: DoughListProductModel.fromEntity(doughProduct));
+          doughListProduct: DoughProductToAddModel.fromEntity(doughProduct));
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -118,16 +120,20 @@ class DoughRepositoryImpl extends DoughRepository {
   }
 
   @override
-  Future<DataState<String>> addDoughProducts(
-      int userId, List<DoughListProductEntity> doughListProduct)async {
-   try {
-     final List<DoughListProductModel> doughListProductModels =
-        doughListProduct.map((entity) => DoughListProductModel.fromEntity(entity)).toList();
+  Future<DataState<int>> addDoughProducts(
+      int userId, List<DoughProductToAddEntity> doughListProduct) async {
+    try {
+      final List<DoughProductToAddModel> doughListProductModels =
+          doughListProduct
+              .map((entity) => DoughProductToAddModel.fromEntity(entity))
+              .toList();
 
       final httpResponse = await _doughApiService.addDoughProducts(
-          doughListProduct: doughListProductModels);
-      if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return DataSuccess(httpResponse.data as String);
+          doughListProduct: doughListProductModels,
+          userId: userId
+          );
+      if (httpResponse.response.statusCode! >= 200 && httpResponse.response.statusCode! <= 300  ) {
+        return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
           DioException(

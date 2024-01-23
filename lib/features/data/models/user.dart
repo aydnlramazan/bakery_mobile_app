@@ -4,12 +4,12 @@ class UserModel extends UserEntity {
   const UserModel({
     int? id,
     String? name,
-    int? operationClaim,
+    int? operationClaimId,
     String ? token,
   }) : super(
           id: id,
           name: name,
-          operationClaim: operationClaim,
+          operationClaim: operationClaimId,
           token: token
         );
 
@@ -17,7 +17,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: map["id"] ?? 0,
       name: map["firstName"] ?? "",
-      operationClaim: map["operationClaimId"] ?? 0,
+      operationClaimId: map["operationClaimId"] ?? 0,
       token: map["token"] ?? "",
     );
   }
@@ -26,7 +26,7 @@ class UserModel extends UserEntity {
     return {
       'id': id,
       'name': name,
-      'operationClaim': operationClaim,
+      'operationClaimId': operationClaim,
       'token': token,
     };
   }
@@ -35,7 +35,7 @@ class UserModel extends UserEntity {
     return UserModel(
       id: entity.id,
       name: entity.name,
-      operationClaim: entity.operationClaim,
+      operationClaimId: entity.operationClaim,
       token:entity.token,
     );
   }
