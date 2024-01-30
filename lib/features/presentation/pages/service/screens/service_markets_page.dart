@@ -305,7 +305,7 @@ class ServiceMarketsPage extends StatelessWidget {
                 context.read<ServiceAddedMarketsBloc>().add(
                     ServiceUpdateAddedMarketRequested(
                         market: ServiceAddedMarketModel(
-                            id: 0,
+                            id: addedMarketModel.id,
                             serviceListId: listId,
                             marketId: addedMarketModel.marketId,
                             marketName: addedMarketModel.marketName,
