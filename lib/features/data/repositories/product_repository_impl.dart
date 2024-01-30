@@ -21,7 +21,7 @@ class ProductRepositoryImpl extends ProductRepository {
       final List<ProductToAddModel> productModel =
           productList.map((e) => ProductToAddModel.fromEntity(e)).toList();
       final httpResponse =
-          await _apiService.addProducts(doughListProduct: productModel);
+          await _apiService.addProducts(userId: userId,categoryId: categoryId,doughListProduct: productModel);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {

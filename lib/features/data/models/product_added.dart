@@ -22,7 +22,7 @@ class AddedProductModel extends AddedProductEntity {
       productId: map["productId"] ?? 0,
       productName: map["productName"] ?? "",
       price: map["price"] ?? 0.0,
-      productListId: map["productListId"] ?? 0,
+      productListId: map["productionListId"] ?? 0,
       quantity: map["quantity"] ?? 0,
     );
   }
@@ -33,7 +33,7 @@ class AddedProductModel extends AddedProductEntity {
       'productId': productId,
       'productName': productName,
       'price': price,
-      'productListId': productListId,
+      'productionListId': productListId,
       'quantity': quantity,
     };
   }

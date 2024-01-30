@@ -1,25 +1,39 @@
 part of 'auth_bloc.dart';
 
-abstract class AuthState extends Equatable {
-  final UserEntity? user;
-  final DioException? error;
+@immutable
+sealed class AuthState extends Equatable {
+  const AuthState();
+  
+  get user => null;
+}
 
-  const AuthState({this.user, this.error});
-
+final class AuthInitial extends AuthState {
+  const AuthInitial();
+  
   @override
-  List<Object> get props => [user!, error!];
+  List<Object?> get props => [];
 }
 
-final class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {
+final class AuthLoading extends AuthState {
   const AuthLoading();
+  
+  @override
+  
+  List<Object?> get props => [];
 }
 
-class AuthSuccess extends AuthState {
-  const AuthSuccess(UserEntity user) : super(user: user);
+final class AuthSuccess extends AuthState {
+  final UserModel? user;
+  const AuthSuccess({this.user});
+  
+  @override
+  
+  List<Object?> get props => [user];
 }
 
-class AuthFailure extends AuthState {
-  const AuthFailure(DioException error) : super(error: error);
+final class AuthFailure extends AuthState {
+  final DioException? error;
+  const AuthFailure({this.error});
+  @override
+  List<Object?> get props => [error];
 }

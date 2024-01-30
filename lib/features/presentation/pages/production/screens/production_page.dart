@@ -1,70 +1,367 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:bakery_app/features/data/models/user.dart';
+import 'package:bakery_app/features/presentation/pages/production/bloc/added_products/added_product_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/production/bloc/products/product_bloc.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_app_bar_with_date.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/utils/toast_message.dart';
+import '../../../../data/models/product.dart';
+import '../../../../data/models/product_added.dart';
+import '../../../../data/models/product_to_add.dart';
+import '../../../widgets/added_product.dart';
+import '../../../widgets/available_product.dart';
+import '../../../widgets/custom_save_button.dart';
+import '../../../widgets/custom_update_quantity_dialog.dart';
+import '../../../widgets/editable_added_product.dart';
+import '../../../widgets/empty_content.dart';
+import '../../../widgets/error_animation.dart';
+import '../../../widgets/loading_indicator.dart';
+
 class ProductionPage extends StatefulWidget {
-   static const String routeName = "production-page";
-  const ProductionPage({super.key});
+  static const String routeName = "production-page";
+  final UserModel user;
+  const ProductionPage({super.key, required this.user});
 
   @override
   State<ProductionPage> createState() => _ProductionPageState();
 }
 
 class _ProductionPageState extends State<ProductionPage> {
-    static String date = "Bugün";
+  static String date = "Bugün";
   static bool todayDate = true;
   static DateTime? selectedDate = DateTime.now();
-    @override
+  int categoryId = 1;
+  late UserModel user;
+  final List<ProductToAddModel> listToPost = List.empty(growable: true);
+  String pageTitle = '';
+  @override
   void initState() {
     super.initState();
-    //context.read<DoughFactoryBloc>().add(DoughGetListsRequested(dateTime: selectedDate!));
+
+    user = widget.user;
+    categoryId = user.operationClaim!;
+    _setPageTitle(categoryId);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: _buildAppbar(),
+      body: _buildBody(),
     );
   }
 
-    _buildAppbar() {
+  _buildBody() {
+    if (todayDate) {
+      return LayoutBuilder(builder: (context, constraints) {
+        double screenHeight = constraints.maxHeight;
+        double sectionHeight = screenHeight * 0.46;
+        double buttonHeight = screenHeight * 0.08;
+
+        return Column(
+          children: [
+            SizedBox(
+              height: sectionHeight,
+              child: _getAvailableProducts(),
+            ),
+            SizedBox(
+              height: sectionHeight,
+              child: _getEditableAddedProducts(),
+            ),
+            SizedBox(
+              width: double.infinity,
+              height: buttonHeight,
+              child: CustomSaveButton(
+                onTap: () {
+                  _saveNewProducts();
+                },
+                text: "Kaydet",
+              ),
+            ),
+          ],
+        );
+      });
+    } else {
+      return _getAddedProducts();
+    }
+  }
+
+  _getAddedProducts() {
+    context.read<AddedProductBloc>().add(
+        GetAddedProductsRequested(date: selectedDate!, categoryId: categoryId));
+    return BlocBuilder<AddedProductBloc, AddedProductState>(
+        builder: ((context, state) {
+      return switch (state) {
+        AddedProductLoading() => const LoadingIndicator(),
+        AddedProductFailure() => const ErrorAnimation(),
+        AddedProductSuccess() => state.addedProducts!.isEmpty
+            ? const EmptyContent()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "Yapılan Liste",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.addedProducts!.length,
+                      itemBuilder: (context, index) {
+                        return AddedProduct(
+                            productName:
+                                state.addedProducts![index].productName!,
+                            quantity: state.addedProducts![index].quantity!,
+                            index: index);
+                      },
+                    ),
+                  ),
+                ],
+              )
+      };
+    }));
+  }
+
+  _getEditableAddedProducts() {
+    context.read<AddedProductBloc>().add(
+        GetAddedProductsRequested(date: selectedDate!, categoryId: categoryId));
+    return BlocBuilder<AddedProductBloc, AddedProductState>(
+        builder: ((context, state) {
+      return switch (state) {
+        AddedProductLoading() => const LoadingIndicator(),
+        AddedProductFailure() => const ErrorAnimation(),
+        AddedProductSuccess() => state.addedProducts!.isEmpty
+            ? const EmptyContent()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Center(
+                      child: Text(
+                        "Yapılan Liste",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.addedProducts!.length,
+                      itemBuilder: (context, index) {
+                        return EditableAddedProduct(
+                            productName:
+                                state.addedProducts![index].productName!,
+                            quantity: state.addedProducts![index].quantity!,
+                            onEditPressed: () {
+                              _updateAddedProduct(
+                                  state.addedProducts![index], index);
+                            },
+                            onDeletePressed: () {
+                              _removeAddedProduct(
+                                  context, state.addedProducts![index]);
+                            },
+                            index: index);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+      };
+    }));
+  }
+
+  _getAvailableProducts() {
+    List<TextEditingController> controllers = List.empty(growable: true);
+    context
+        .read<ProductBloc>()
+        .add(GetProductsRequested(date: selectedDate!, categoryId: categoryId));
+
+    return BlocBuilder<ProductBloc, ProductState>(builder: ((context, state) {
+      return switch (state) {
+        ProductLoading() => const LoadingIndicator(),
+        ProductFailure() => const ErrorAnimation(),
+        ProductSuccess() => state.products!.isEmpty
+            ? const EmptyContent()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(8),
+                    child: const Center(
+                      child: Text(
+                        "Ürünler Listsi",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.products!.length,
+                      itemBuilder: (context, index) {
+                        controllers.add(TextEditingController());
+                        return AvailableProductWidget(
+                            productName: state.products![index].name!,
+                            controller: controllers[index],
+                            index: index,
+                            onPressed: () {
+                              if (controllers[index].text.isNotEmpty) {
+                                _addProductToAddedList(
+                                    context,
+                                    state.products![index],
+                                    int.parse(controllers[index].text));
+                                controllers[index].clear();
+                              } else {
+                                showToastMessage("Bir sayı girmelisiniz!");
+                              }
+                            });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+      };
+    }));
+  }
+
+  _saveNewProducts() async {
+    if (listToPost.isNotEmpty) {
+      context.read<AddedProductBloc>().add(PostAddedProductRequested(
+          products: listToPost, userId: user.id!, categoryId: categoryId));
+    } else {
+      showToastMessage("Yeni ürün eklemelisiniz!");
+    }
+  }
+
+  _updateAddedProduct(AddedProductModel addedProductModel, int index) {
+    TextEditingController controller =
+        TextEditingController(text: addedProductModel.quantity.toString());
+    print("update place : $addedProductModel");
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return UpdateQuantityDialog(
+              controller: controller,
+              onSave: (newQuantity) {
+                if (newQuantity != addedProductModel.quantity) {
+                  context.read<AddedProductBloc>().add(
+                      UpdateAddedProductRequested(
+                          product: AddedProductModel(
+                              id: addedProductModel.id,
+                              productId: addedProductModel.productId,
+                              productListId: addedProductModel.productListId,
+                              productName: addedProductModel.productName,
+                              quantity: newQuantity),
+                          index: index));
+                }
+              },
+              title: "Ürün adedini güncelle!");
+        });
+  }
+
+  _removeAddedProduct(BuildContext context, AddedProductModel addedProduct) {
+    context
+        .read<AddedProductBloc>()
+        .add(RemoveAddedProductRequested(product: addedProduct));
+    context.read<ProductBloc>().add(AddProductRequested(
+        product: ProductModel(
+            id: addedProduct.productId, name: addedProduct.productName)));
+  }
+
+  _addProductToAddedList(
+      BuildContext context, ProductModel productModel, int quantity) {
+    context
+        .read<ProductBloc>()
+        .add(RemoveProductRequested(product: productModel));
+    context.read<AddedProductBloc>().add(AddAddedProductRequested(
+        product: AddedProductModel(
+            id: 0,
+            productListId: 0,
+            productId: productModel.id,
+            productName: productModel.name,
+            quantity: quantity)));
+
+    listToPost.add(ProductToAddModel(
+        id: 0,
+        price: 0,
+        productId: productModel.id,
+        productionListId: 0,
+        quantity: quantity));
+  }
+
+  _buildAppbar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(70),
       child: CustomAppBarWithDate(
-        title: "Hamurhane",
+        title: pageTitle,
         date: date,
         onTap: _selectDate,
       ),
     );
   }
 
-   Future<void> _selectDate() async {
+  Future<void> _selectDate() async {
     var newDate = await showDatePicker(
-        context: context,
-        initialDate: selectedDate!,
-        firstDate: DateTime(2023),
-        lastDate: DateTime.now());
-    if (newDate != null && !checkDate(newDate)) selectedDate = newDate;
+      context: context,
+      initialDate: selectedDate!,
+      firstDate: DateTime(2023),
+      lastDate: DateTime.now(),
+      locale: const Locale('tr', 'TR'),
+    );
 
-    if (selectedDate != null) {
+    if (selectedDate != null && newDate != null && !checkDate(newDate)) {
+      selectedDate = newDate;
       setState(() {
-      //  context.read<DoughFactoryBloc>().add(DoughGetListsRequested(dateTime: selectedDate!));
         todayDate = isToday(selectedDate!);
-        todayDate
-            ? date = 'Bugün'
-            : date = selectedDate.toString().split(" ")[0];
+        if (todayDate) {
+          date = 'Bugün';
+          context.read<AddedProductBloc>().add(GetAddedProductsRequested(
+              date: selectedDate!, categoryId: user.operationClaim!));
+          context.read<ProductBloc>().add(GetProductsRequested(
+              date: selectedDate!, categoryId: user.operationClaim!));
+        } else {
+          date = selectedDate.toString().split(" ")[0];
+        }
       });
     }
   }
 
-    bool isToday(DateTime selectedDate) {
+  bool isToday(DateTime selectedDate) {
     DateTime currentDate = DateTime.now();
     return currentDate.year == selectedDate.year &&
         currentDate.month == selectedDate.month &&
         currentDate.day == selectedDate.day;
   }
 
-    bool checkDate(DateTime newDate) {
+  bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&
         newDate.month == selectedDate!.month &&
         newDate.day == selectedDate!.day;
   }
 
+  _setPageTitle(int operationClaimId) {
+    switch (operationClaimId) {
+      case 2:
+        {
+          pageTitle = 'Pastane';
+          categoryId = 1;
+        }
+      case 3:
+        {
+          pageTitle = 'Hamur işi';
+          categoryId = 2;
+        }
+    }
+  }
 }

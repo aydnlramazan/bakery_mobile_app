@@ -13,13 +13,12 @@ class _AuthApiService implements AuthApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://192.168.1.2:7207';
+    baseUrl ??= 'https://192.168.12.54:7207';
   }
 
   final Dio _dio;
 
   String? baseUrl;
-  Duration responseTimeout = const Duration(seconds: 30);
 
   @override
   Future<HttpResponse<UserModel>> loginUser({
@@ -33,14 +32,12 @@ class _AuthApiService implements AuthApiService {
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<HttpResponse<UserModel>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
-      receiveTimeout: responseTimeout,
-      sendTimeout: responseTimeout,
     )
             .compose(
               _dio.options,
@@ -60,18 +57,16 @@ class _AuthApiService implements AuthApiService {
 
   @override
   Future<HttpResponse<dynamic>> logoutUser() async {
-   
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(
-        Options(
-                method: 'POST',
-                headers: _headers,
-                extra: _extra,
-                receiveTimeout: responseTimeout,
-                sendTimeout: responseTimeout)
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
             .compose(
               _dio.options,
               '/api/Auth/logout',

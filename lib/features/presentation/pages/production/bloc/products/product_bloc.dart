@@ -15,6 +15,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       final ProductUseCase _productUseCase;
   ProductBloc(this._productUseCase) : super(const ProductLoading()) {
     on<GetProductsRequested>(onGetProducts);
+    on<AddProductRequested>((onAddProductToList));
+    on<RemoveProductRequested>(onRemoveProductFromList);
   }
 
    void onGetProducts(

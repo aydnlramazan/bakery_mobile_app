@@ -127,6 +127,7 @@ class AddedProductBloc extends Bloc<AddedProductsEvent, AddedProductState> {
               ProductToAddEntity(
                   id: event.product.id,
                   productId: event.product.productId,
+                  price: 0,
                   productionListId: event.product.productListId,
                   quantity: event.product.quantity));
 

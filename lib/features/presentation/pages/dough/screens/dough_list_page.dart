@@ -28,8 +28,7 @@ class _DoughListPageState extends State<DoughListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<DoughFactoryBloc>()
-        .add(DoughGetListsRequested(dateTime: selectedDate!));
+    context.read<DoughFactoryBloc>().add(DoughGetListsRequested(dateTime: selectedDate!));
   }
 
   @override
@@ -132,9 +131,10 @@ class _DoughListPageState extends State<DoughListPage> {
         initialDate: selectedDate!,
         firstDate: DateTime(2023),
         lastDate: DateTime.now());
-    if (newDate != null && !checkDate(newDate)) selectedDate = newDate;
+    
 
-    if (selectedDate != null) {
+    if (selectedDate != null && newDate != null && !checkDate(newDate)) {
+      selectedDate = newDate;
       setState(() {
         context
             .read<DoughFactoryBloc>()

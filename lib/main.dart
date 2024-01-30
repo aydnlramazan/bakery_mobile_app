@@ -9,10 +9,14 @@ import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
-import 'package:bakery_app/features/presentation/pages/service/ServiceListPage.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_markets/service_markets_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/screens/service_lists_page.dart';
 import 'package:bakery_app/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'features/presentation/pages/auth/bloc/auth_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_added_products/dough_added_products_bloc.dart';
@@ -26,7 +30,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
   UserModel? savedUser = await UserPreferences.getUser();
- 
+
   runApp(MyApp(savedUser: savedUser));
 }
 
@@ -36,7 +40,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
@@ -54,11 +57,26 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProductBloc>(
           create: (context) => ProductBloc(sl()),
         ),
-          BlocProvider<AddedProductBloc>(
+        BlocProvider<AddedProductBloc>(
           create: (context) => AddedProductBloc(sl()),
+        ),
+        BlocProvider<ServiceListsBloc>(
+          create: (context) => ServiceListsBloc(sl()),
+        ),
+         BlocProvider<ServiceMarketsBloc>(
+          create: (context) => ServiceMarketsBloc(sl()),
+        ),
+         BlocProvider<ServiceAddedMarketsBloc>(
+          create: (context) => ServiceAddedMarketsBloc(sl()),
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('tr')],
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: theme(),
@@ -77,9 +95,9 @@ class MyApp extends StatelessWidget {
       case 1:
         return const DoughListPage();
       case 2:
-        return const ProductionPage();
+        return ProductionPage(user: savedUser);
       case 3:
-        return const ProductionPage();
+        return ProductionPage(user: savedUser);
       case 4:
         return const ServiceListPage();
       default:

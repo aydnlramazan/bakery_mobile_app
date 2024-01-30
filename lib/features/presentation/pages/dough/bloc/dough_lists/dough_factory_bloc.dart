@@ -2,7 +2,6 @@
 
 import 'package:bakery_app/core/resources/data_state.dart';
 import 'package:bakery_app/features/data/models/dough_list.dart';
-import 'package:bakery_app/features/data/models/dough_product_to_add.dart';
 
 import 'package:bakery_app/features/domain/usecases/dough_factory_usecases.dart';
 import 'package:bloc/bloc.dart';

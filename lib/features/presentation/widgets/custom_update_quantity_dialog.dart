@@ -25,14 +25,14 @@ class UpdateQuantityDialog extends StatelessWidget {
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly
             ],
-            decoration: const InputDecoration(labelText: 'Quantity'),
+            decoration: const InputDecoration(labelText: 'Adet'),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: const Text('Vazgeç'),
         ),
         TextButton(
           onPressed: () {
@@ -44,7 +44,7 @@ class UpdateQuantityDialog extends StatelessWidget {
               Navigator.of(context).pop();
             }
           },
-          child: const Text('Save'),
+          child: const Text('Kaydet'),
         ),
       ],
     );

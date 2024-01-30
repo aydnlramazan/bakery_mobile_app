@@ -1,11 +1,13 @@
 import 'package:bakery_app/core/constants/global_variables.dart';
 import 'package:bakery_app/core/utils/user_login_params.dart';
+import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
-import 'package:bakery_app/features/presentation/pages/service/ServiceListPage.dart';
+import 'package:bakery_app/features/presentation/pages/service/screens/service_lists_page.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_button.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 
@@ -26,10 +28,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+        systemOverlayStyle:const SystemUiOverlayStyle(statusBarColor: GlobalVariables.secondaryColor),
+        elevation: 0,
+      //  backgroundColor: const Color.fromARGB(115, 233, 233, 233),
+      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            _determineHomePage(state.user!.operationClaim!);
+            _determineHomePage(state.user!);
           }
 
           if (state is AuthFailure) {
@@ -49,16 +57,13 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
           return Container(
-            padding: const EdgeInsets.all(16.0),
-            color: const Color.fromARGB(115, 233, 233, 233),
+            padding: const EdgeInsets.only(left:18.0,right: 18.0),
+          // color: const Color.fromARGB(115, 233, 233, 233),
             child: Form(
               key: _signinFormKey,
               child: Center(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
                     SizedBox(
                         height: 200,
                         child: Lottie.asset('assets/bakery.json',
@@ -91,8 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                                     userName: _userNameController.text.trim(),
                                     password: _passwordController.text.trim(),
                                   ),
-                                ),
-                              );
+                                ),);
                         }
                       },
                       color: GlobalVariables.secondaryColor,
@@ -107,24 +111,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  _determineHomePage(int operationClaim) {
-    switch (operationClaim) {
+  _determineHomePage(UserModel user) {
+    switch (user.operationClaim) {
       case 1:
-        _navigateToPage(DoughListPage.routeName);
-
+        _navigateToPage(DoughListPage.routeName,null);
       case 2:
-       _navigateToPage(ProductionPage.routeName);
+       _navigateToPage(ProductionPage.routeName, user);
       case 3:
-       _navigateToPage(ProductionPage.routeName);
+       _navigateToPage(ProductionPage.routeName,user);
       case 4:
-       _navigateToPage(ServiceListPage.routeName);
+       _navigateToPage(ServiceListPage.routeName,null);
       default:
-       _navigateToPage(LoginPage.routeName);
+       _navigateToPage(LoginPage.routeName,null);
   
     }
   }
 
-  _navigateToPage(String routeName) {
-    Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false);
+  _navigateToPage(String routeName, UserModel? args) {
+    args == null ?
+    Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false) :
+     Navigator.pushNamedAndRemoveUntil(context, routeName,arguments: args, (route) => false);
   }
 }

@@ -1,21 +1,29 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:bakery_app/core/constants/constants.dart';
 import 'package:bakery_app/features/data/data_sources/remote/auth_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/dough_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/product_service.dart';
+import 'package:bakery_app/features/data/data_sources/remote/service_services_service.dart';
 import 'package:bakery_app/features/data/repositories/auth_repository_impl.dart';
 import 'package:bakery_app/features/data/repositories/dough_repository_impl.dart';
 import 'package:bakery_app/features/data/repositories/product_repository_impl.dart';
 import 'package:bakery_app/features/domain/repositories/auth_repository.dart';
 import 'package:bakery_app/features/domain/repositories/dough_repository.dart';
 import 'package:bakery_app/features/domain/repositories/product_repository.dart';
+import 'package:bakery_app/features/domain/repositories/service_market_repository.dart';
 import 'package:bakery_app/features/domain/usecases/dough_factory_usecases.dart';
 import 'package:bakery_app/features/domain/usecases/product_usecase.dart';
+import 'package:bakery_app/features/domain/usecases/service_market_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/user_login_usecase.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_markets/service_markets_bloc.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
+import 'features/data/repositories/service_market_repository_impl.dart';
 import 'features/presentation/pages/auth/bloc/auth_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_added_products/dough_added_products_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_lists/dough_factory_bloc.dart';
@@ -36,11 +44,14 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<DoughRepository>(DoughRepositoryImpl(sl()));
   sl.registerSingleton<ProductApiService>(ProductApiService(sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
+  sl.registerSingleton<ServiceServicesApiService>(ServiceServicesApiService(sl()));
+  sl.registerSingleton<ServiceMarketRepository>(ServiceMarketRepositoryImpl(sl()));
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
   sl.registerSingleton<DoughUseCase>(DoughUseCase(sl()));
   sl.registerSingleton<ProductUseCase>(ProductUseCase(sl()));
+  sl.registerSingleton<ServiceMarketUseCase>(ServiceMarketUseCase(sl()));
 
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(sl()));
@@ -49,4 +60,10 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<DoughProductsBloc>(() => DoughProductsBloc(sl()));
   sl.registerFactory<ProductBloc>(() => ProductBloc(sl()));
   sl.registerFactory<AddedProductBloc>(() => AddedProductBloc(sl()));
+  sl.registerFactory<ServiceListsBloc>(() => ServiceListsBloc(sl()));
+  sl.registerFactory<ServiceMarketsBloc>(() => ServiceMarketsBloc(sl()));
+  sl.registerFactory<ServiceAddedMarketsBloc>(() => ServiceAddedMarketsBloc(sl()));
+
+
+
 }

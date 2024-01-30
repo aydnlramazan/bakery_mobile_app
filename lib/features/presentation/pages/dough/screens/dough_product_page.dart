@@ -22,7 +22,7 @@ class DoughProductPage extends StatelessWidget {
   static const String routeName = "dough-products-page";
   int listId;
   final bool canEdit;
-   DoughProductPage({super.key, required this.listId, required this.canEdit});
+  DoughProductPage({super.key, required this.listId, required this.canEdit});
 
   final List<DoughProductToAddModel> listToPost = List.empty(growable: true);
 
@@ -252,20 +252,43 @@ class DoughProductPage extends StatelessWidget {
           return UpdateQuantityDialog(
               controller: controller,
               onSave: (newQuantity) {
-                if (newQuantity != addedProductModel.quantity) {
-                  context.read<DoughAddedProductsBloc>().add(
-                      DoughUpdateAddedProductRequested(
-                          product: DoughAddedProductModel(
-                              id: addedProductModel.id,
-                              doughFactoryProductId:
-                                  addedProductModel.doughFactoryProductId,
-                              doughFactoryListId:
-                                  addedProductModel.doughFactoryListId,
-                              doughFactoryProductName:
-                                  addedProductModel.doughFactoryProductName,
-                              quantity: newQuantity),
-                          index: index));
+                if (newQuantity == addedProductModel.quantity) {
+                  return;
                 }
+
+                if (addedProductModel.id == 0 && listToPost.isNotEmpty) {
+                  int indexToUpdate = listToPost.indexWhere((element) =>
+                      element.doughFactoryProductId ==
+                      addedProductModel.doughFactoryProductId);
+
+                  if (indexToUpdate != -1) {
+                    // Check if the item is found in the list
+                    DoughProductToAddModel updatedProduct =
+                        DoughProductToAddModel(
+                      id: 0,
+                      doughFactoryProductId:
+                          listToPost[indexToUpdate].doughFactoryProductId,
+                      quantity: newQuantity,
+                      doughFactoryListId:
+                          listToPost[indexToUpdate].doughFactoryListId,
+                    );
+
+                    listToPost[indexToUpdate] = updatedProduct;
+                  }
+                }
+
+                context.read<DoughAddedProductsBloc>().add(
+                    DoughUpdateAddedProductRequested(
+                        product: DoughAddedProductModel(
+                            id: addedProductModel.id,
+                            doughFactoryProductId:
+                                addedProductModel.doughFactoryProductId,
+                            doughFactoryListId:
+                                addedProductModel.doughFactoryListId,
+                            doughFactoryProductName:
+                                addedProductModel.doughFactoryProductName,
+                            quantity: newQuantity),
+                        index: index));
               },
               title: "title");
         });
@@ -273,6 +296,10 @@ class DoughProductPage extends StatelessWidget {
 
   _removeAddedProduct(
       BuildContext context, DoughAddedProductModel addedProduct) {
+    if (listToPost.isNotEmpty) {
+      listToPost.removeWhere((element) =>
+          element.doughFactoryProductId == addedProduct.doughFactoryProductId);
+    }
     context
         .read<DoughAddedProductsBloc>()
         .add(DoughRemoveAddedProductRequested(product: addedProduct));
