@@ -132,12 +132,7 @@ class AddedProductBloc extends Bloc<AddedProductsEvent, AddedProductState> {
                   quantity: event.product.quantity));
 
           if (dataState is DataSuccess) {
-            emit(AddedProductSuccess(addedProducts: [
-              ...state.addedProducts!.map((element) =>
-                  element.productId == event.product.productId
-                      ? event.product
-                      : element)
-            ]));
+            emit(AddedProductSuccess(addedProducts: [...state.addedProducts!.map((element) => element.productId == event.product.productId ? event.product : element)]));
           }
           if (dataState is DataFailed) {
             emit(AddedProductFailure(error: dataState.error!));

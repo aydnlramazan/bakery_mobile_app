@@ -250,12 +250,12 @@ class DoughProductPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return UpdateQuantityDialog(
+            
               controller: controller,
               onSave: (newQuantity) {
                 if (newQuantity == addedProductModel.quantity) {
                   return;
                 }
-
                 if (addedProductModel.id == 0 && listToPost.isNotEmpty) {
                   int indexToUpdate = listToPost.indexWhere((element) =>
                       element.doughFactoryProductId ==
@@ -290,7 +290,7 @@ class DoughProductPage extends StatelessWidget {
                             quantity: newQuantity),
                         index: index));
               },
-              title: "title");
+              title: addedProductModel.doughFactoryProductName!);
         });
   }
 

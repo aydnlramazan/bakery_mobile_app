@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:bakery_app/features/presentation/pages/service/screens/service_account_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_markets_page.dart';
 import 'package:bakery_app/features/presentation/widgets/empty_content.dart';
 import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart';
@@ -63,10 +64,12 @@ class _ServiceListPageState extends State<ServiceListPage> {
                     color: GlobalVariables.secondaryColorLight,
                   ),
                   child: ListTile(
-                    leading: Text(
-                      (index + 1).toString(),
-                      style: const TextStyle(
-                          fontSize: 18, color: GlobalVariables.secondaryColor),
+                    leading: CircleAvatar(
+                      child: Text(
+                        (index + 1).toString(),
+                        style: const TextStyle(
+                            fontSize: 18, color: GlobalVariables.secondaryColor),
+                      ),
                     ),
                     title: const Text(
                       "Servis",
@@ -149,8 +152,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
             FloatingActionButton(
               heroTag: "Service Account",
               onPressed: () {
-                Navigator.pushNamed(context, ServiceMarketsPage.routeName,
-                    arguments: {0: 0, 1: true});
+                Navigator.pushNamed(context, ServiceAccountPage.routeName);
               },
               backgroundColor: GlobalVariables.secondaryColor,
               tooltip: 'Service Account',

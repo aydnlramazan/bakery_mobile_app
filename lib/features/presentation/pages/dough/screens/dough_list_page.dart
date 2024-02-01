@@ -5,10 +5,11 @@ import 'package:bakery_app/core/constants/global_variables.dart';
 import 'package:bakery_app/features/data/data_sources/local/shared_preference.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_product_page.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_app_bar_with_date.dart';
+import 'package:bakery_app/features/presentation/widgets/error_animation.dart';
+import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
-
+import '../../../widgets/empty_content.dart';
 import '../bloc/dough_lists/dough_factory_bloc.dart';
 
 class DoughListPage extends StatefulWidget {
@@ -28,7 +29,9 @@ class _DoughListPageState extends State<DoughListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<DoughFactoryBloc>().add(DoughGetListsRequested(dateTime: selectedDate!));
+    context
+        .read<DoughFactoryBloc>()
+        .add(DoughGetListsRequested(dateTime: selectedDate!));
   }
 
   @override
@@ -42,57 +45,52 @@ class _DoughListPageState extends State<DoughListPage> {
   _buildBody() {
     return BlocBuilder<DoughFactoryBloc, DoughFactoryState>(
         builder: (context, state) {
-      print("state list page: ${state.doughLists}");
-      if (state is DoughFactoryLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-      if (state.doughLists != null && state.doughLists!.isNotEmpty) {
-        return ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: state.doughLists!.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: GlobalVariables.secondaryColorLight,
-                  ),
-                  child: ListTile(
-                    leading: Text(
-                      (index + 1).toString(),
-                      style: const TextStyle(
-                          fontSize: 18, color: GlobalVariables.secondaryColor),
-                    ),
-                    title: Text(
-                      state.doughLists![index].userName!,
-                      textScaleFactor: 1.2,
-                    ),
-                    subtitle: Text(
-                      getFormattedDateTime(state.doughLists![index].date!),
-                    ),
-                    onTap: () async {
-                      bool result =
-                          await canEdit(state.doughLists![index].userId!);
-                      Navigator.pushNamed(context, DoughProductPage.routeName,
-                          arguments: {
+      return switch (state) {
+        DoughFactoryLoading() => const LoadingIndicator(),
+        DoughFactoryFailure() => const ErrorAnimation(),
+        DoughGetListsSuccess() => state.doughLists!.isEmpty
+            ? const EmptyContent()
+            : ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: state.doughLists!.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: GlobalVariables.secondaryColorLight,
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          child: Text(
+                            (index + 1).toString(),
+                            style: const TextStyle(
+                                fontSize: 18,
+                                color: GlobalVariables.secondaryColor),
+                          ),
+                        ),
+                        title: Text(
+                          state.doughLists![index].userName!,
+                          textScaleFactor: 1.2,
+                        ),
+                        subtitle: Text(
+                          getFormattedDateTime(state.doughLists![index].date!),
+                        ),
+                        onTap: () async {
+                          bool result =
+                              await canEdit(state.doughLists![index].userId!);
+                          Navigator.pushNamed(
+                              context, DoughProductPage.routeName, arguments: {
                             0: state.doughLists![index].id,
                             1: result
                           });
-                    },
-                  ),
-                ),
-              );
-            });
-      }
-      return Center(
-        child: Container(
-          child: Lottie.asset('assets/empty_box.json',
-              repeat: false, animate: true),
-        ),
-      );
+                        },
+                      ),
+                    ),
+                  );
+                })
+      };
     });
   }
 
@@ -131,7 +129,6 @@ class _DoughListPageState extends State<DoughListPage> {
         initialDate: selectedDate!,
         firstDate: DateTime(2023),
         lastDate: DateTime.now());
-    
 
     if (selectedDate != null && newDate != null && !checkDate(newDate)) {
       selectedDate = newDate;

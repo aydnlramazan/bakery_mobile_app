@@ -49,11 +49,11 @@ class ServiceMarketsPage extends StatelessWidget {
           children: [
             SizedBox(
               height: sectionHeight,
-              child: _getAvailableProducts(context),
+              child: _getAvailableMarkets(context),
             ),
             SizedBox(
               height: sectionHeight,
-              child: _getEditableAddedProducts(context),
+              child: _getEditableGivenMarkets(context),
             ),
             SizedBox(
               width: double.infinity,
@@ -69,11 +69,11 @@ class ServiceMarketsPage extends StatelessWidget {
         );
       });
     } else {
-      return _getAddedProducts(context);
+      return _getGivenMarkets(context);
     }
   }
 
-  _getAddedProducts(BuildContext context) {
+  _getGivenMarkets(BuildContext context) {
     context
         .read<ServiceAddedMarketsBloc>()
         .add(ServiceGetAddedMarketsRequested(listId: listId));
@@ -91,7 +91,7 @@ class ServiceMarketsPage extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     child: Center(
                       child: Text(
-                        "Yapılan Liste",
+                        "Verilen Marketler",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -116,7 +116,7 @@ class ServiceMarketsPage extends StatelessWidget {
     }));
   }
 
-  _getEditableAddedProducts(BuildContext context) {
+  _getEditableGivenMarkets(BuildContext context) {
     context
         .read<ServiceAddedMarketsBloc>()
         .add(ServiceGetAddedMarketsRequested(listId: listId));
@@ -139,7 +139,7 @@ class ServiceMarketsPage extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     child: Center(
                       child: Text(
-                        "Yapılan Liste",
+                        "Verilen Marketler",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -172,7 +172,7 @@ class ServiceMarketsPage extends StatelessWidget {
     }));
   }
 
-  _getAvailableProducts(BuildContext context) {
+  _getAvailableMarkets(BuildContext context) {
     List<TextEditingController> controllers = List.empty(growable: true);
     context
         .read<ServiceMarketsBloc>()
@@ -193,7 +193,7 @@ class ServiceMarketsPage extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: const Center(
                       child: Text(
-                        "Ürünler Listsi",
+                        "Marketler Listsi",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -273,10 +273,9 @@ class ServiceMarketsPage extends StatelessWidget {
     }
   }
 
-  _updateAddedProduct(BuildContext context,
-      ServiceAddedMarketModel addedMarketModel, int index) {
-    TextEditingController controller =
-        TextEditingController(text: addedMarketModel.quantity.toString());
+  _updateAddedProduct(BuildContext context,ServiceAddedMarketModel addedMarketModel, int index) {
+    
+    TextEditingController controller =TextEditingController(text: addedMarketModel.quantity.toString());
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -312,7 +311,7 @@ class ServiceMarketsPage extends StatelessWidget {
                             quantity: newQuantity),
                         index: index));
               },
-              title: "title");
+              title: addedMarketModel.marketName!);
         });
   }
 }

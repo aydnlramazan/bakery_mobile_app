@@ -266,7 +266,7 @@ class _ProductionPageState extends State<ProductionPage> {
                           index: index));
                 }
               },
-              title: "Ürün adedini güncelle!");
+              title: addedProductModel.productName!);
         });
   }
 

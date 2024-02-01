@@ -38,7 +38,6 @@ class ServiceMarketsBloc extends Bloc<ServiceMarketsEvent, ServiceMarketsState> 
 
   void onAddMarketToList(
       ServiceAddMarketRequested event, Emitter<ServiceMarketsState> emit) {
-    final state = this.state;
     if (state is ServiceMarketsSuccess) {
       try {
         emit(ServiceMarketsSuccess(markets: [...?state.markets,event.market]));
@@ -49,8 +48,7 @@ class ServiceMarketsBloc extends Bloc<ServiceMarketsEvent, ServiceMarketsState> 
     }
   }
 
-  void onRemoveMarketFromList(
-      ServiceRemoveMarketRequested event, Emitter<ServiceMarketsState> emit) {
+  void onRemoveMarketFromList(ServiceRemoveMarketRequested event, Emitter<ServiceMarketsState> emit) {
     final state = this.state;
     if (state is ServiceMarketsSuccess) {
       try {
