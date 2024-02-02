@@ -13,6 +13,7 @@ import '../../../../data/models/product_added.dart';
 import '../../../../data/models/product_to_add.dart';
 import '../../../widgets/added_product.dart';
 import '../../../widgets/available_product.dart';
+import '../../../widgets/custom_confirmation_dialog.dart';
 import '../../../widgets/custom_save_button.dart';
 import '../../../widgets/custom_update_quantity_dialog.dart';
 import '../../../widgets/editable_added_product.dart';
@@ -266,18 +267,25 @@ class _ProductionPageState extends State<ProductionPage> {
                           index: index));
                 }
               },
-              title: addedProductModel.productName!);
+                 title: "Güncelleme",
+              content: "${addedProductModel.productName!} adedini güncellemek için emin misiniz?"
+            );
         });
   }
 
   _removeAddedProduct(BuildContext context, AddedProductModel addedProduct) {
-    context
-        .read<AddedProductBloc>()
-        .add(RemoveAddedProductRequested(product: addedProduct));
-    context.read<ProductBloc>().add(AddProductRequested(
-        product: ProductModel(
-            id: addedProduct.productId, name: addedProduct.productName)));
-  }
+ showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:'${addedProduct.productName}\'in listeden silmek için emin misiniz?',
+              onTap: () {
+                   context.read<AddedProductBloc>().add(RemoveAddedProductRequested(product: addedProduct));
+                   context.read<ProductBloc>().add(AddProductRequested(product: ProductModel(id: addedProduct.productId, name: addedProduct.productName)));
+              });
+        });
+ }
 
   _addProductToAddedList(
       BuildContext context, ProductModel productModel, int quantity) {

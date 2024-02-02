@@ -25,7 +25,7 @@ class ServiceAccountPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
-        title: "Servis",
+        title: "Servis Hesabı",
         onTap: () {
           Navigator.pop(context);
         },
@@ -54,9 +54,7 @@ class ServiceAccountPage extends StatelessWidget {
   }
 
   _getNotPaidMarkets(BuildContext context) {
-    context
-        .read<ServiceAccountLeftBloc>()
-        .add(ServiceGetAccountLeftRequested(date: today));
+    context.read<ServiceAccountLeftBloc>().add(ServiceGetAccountLeftRequested(date: today));
 
     return BlocBuilder<ServiceAccountLeftBloc, ServiceAccountLeftState>(
         builder: ((context, state) {
@@ -120,21 +118,22 @@ class ServiceAccountPage extends StatelessWidget {
                   ('Toplam Adet: ${accountLeftModel.givenBread - accountLeftModel.staleBread}'),
               secondText: 'Toplam Tutar: ${accountLeftModel.totalAmount}',
               controller: controller,
-              onSave: (paidAmount)async {
+              onSave: (paidAmount) async {
                 if (paidAmount > accountLeftModel.totalAmount) {
                   showToastMessage("Tutardan fazla sayı girilmez!");
                   return;
                 }
-                context.read<ServiceAccountLeftBloc>().add(ServicePostAccountLeftRequested(context:context,serviceAccountLeftModel: accountLeftModel,paidAmount: paidAmount));
-
+                context.read<ServiceAccountLeftBloc>().add(
+                    ServicePostAccountLeftRequested(
+                        context: context,
+                        serviceAccountLeftModel: accountLeftModel,
+                        paidAmount: paidAmount));
               });
         });
   }
 
   _getPaidMarkets(BuildContext context) {
-    context
-        .read<ServiceAccountReceivedBloc>()
-        .add(ServiceGetAccountReceivedRequested(date: today));
+    context.read<ServiceAccountReceivedBloc>().add(ServiceGetAccountReceivedRequested(date: today));
     return BlocBuilder<ServiceAccountReceivedBloc, ServiceAccountReceivedState>(
         builder: ((context, state) {
       return switch (state) {
@@ -145,14 +144,15 @@ class ServiceAccountPage extends StatelessWidget {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8),
+                   Padding(
+                    padding:const EdgeInsets.all(8),
                     child: Center(
-                      child: Text(
-                        "Verilen Marketler",
-                        style: TextStyle(
+                      child:Text(
+                        "Toplam Alınan ödemler: ${_getReceivedPayment(state.serviceAccountReceived)}",
+                        style:const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
+                      
                     ),
                   ),
                   Expanded(
@@ -214,25 +214,33 @@ class ServiceAccountPage extends StatelessWidget {
                                   givenBread: receivedModel.givenBread)));
                 }
               },
-              title: receivedModel.marketName!);
+              title: receivedModel.marketName);
         });
   }
 
-  _removeReceivedMarket(
-      BuildContext context, ServiceAccountReceivedModel receivedModel) {
+  _removeReceivedMarket(BuildContext context, ServiceAccountReceivedModel receivedModel) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomConfirmationDialog(
               title: 'Silme',
               content:
-                  '${receivedModel.marketName}\'in ödemesini silmek için emin misiniz?',
-              onTap: ()  {
+                  '${receivedModel.marketName} market\'in ödemesini silmek için emin misiniz?',
+              onTap: () {
                 context.read<ServiceAccountReceivedBloc>().add(
-                    ServiceRemoveAccountReceivedRequested(context: context,
+                    ServiceRemoveAccountReceivedRequested(
+                        context: context,
                         serviceAccountReceivedModel: receivedModel));
-              
               });
         });
+  }
+  
+ String _getReceivedPayment(List<ServiceAccountReceivedModel>? serviceAccountReceived) {
+ if (serviceAccountReceived == null || serviceAccountReceived.isEmpty) {
+    return '0.0'; 
+  }
+  double totalAmount = serviceAccountReceived.fold(0.0, (sum, item) => sum + item.amount);
+
+  return totalAmount.toString();
   }
 }

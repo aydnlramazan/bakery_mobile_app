@@ -21,7 +21,6 @@ class ServiceAccountLeftBloc
   ServiceAccountLeftBloc(this._serviceAccountUseCase)
       : super(const ServiceAccountLeftLoading()) {
     on<ServiceGetAccountLeftRequested>(onGetServiceAccountLeft);
-    on<ServiceRemoveAccountLeftRequested>(onRemoveServiceAccountLeft);
     on<ServicePostAccountLeftRequested>(onPostServiceAccountLeft);
   }
   void onGetServiceAccountLeft(ServiceGetAccountLeftRequested event,
@@ -65,19 +64,5 @@ class ServiceAccountLeftBloc
     }
   }
 
-  void onRemoveServiceAccountLeft(ServiceRemoveAccountLeftRequested event,
-      Emitter<ServiceAccountLeftState> emit) async {
-    final state = this.state;
-    if (state is ServiceAccountLeftSuccess) {
-      try {
-        emit(ServiceAccountLeftSuccess(
-            serviceAccountLeft: [...?state.serviceAccountLeft]
-              ..remove(event.serviceAccountLeftModel)));
-      } catch (_) {
-        emit(ServiceAccountLeftFailure(
-            error: DioException.requestCancelled(
-                requestOptions: RequestOptions(), reason: "Faild!")));
-      }
-    }
-  }
+ 
 }

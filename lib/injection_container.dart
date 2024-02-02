@@ -24,11 +24,17 @@ import 'package:bakery_app/features/presentation/pages/service/bloc/service_acco
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_markets/service_markets_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_stale_left/service_stale_left_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/service/bloc/service_stale_received/service_stale_received_bloc.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
+import 'features/data/data_sources/remote/service_stale_service.dart';
 import 'features/data/repositories/service_market_repository_impl.dart';
+import 'features/data/repositories/service_stale_repository_impl.dart';
+import 'features/domain/repositories/service_stale_repository.dart';
+import 'features/domain/usecases/service_stale_usecase.dart';
 import 'features/presentation/pages/auth/bloc/auth_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_added_products/dough_added_products_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_lists/dough_factory_bloc.dart';
@@ -55,8 +61,9 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ServiceMarketRepository>(
       ServiceMarketRepositoryImpl(sl()));
   sl.registerSingleton<ServiceAccountService>(ServiceAccountService(sl()));
-  sl.registerSingleton<ServiceAccountRepository>(
-      ServiceAccountRepositoryImpl(sl()));
+  sl.registerSingleton<ServiceAccountRepository>(ServiceAccountRepositoryImpl(sl()));
+    sl.registerSingleton<ServiceStaleService>(ServiceStaleService(sl()));
+  sl.registerSingleton<ServiceStaleRepository>(ServiceStaleRepositoryImpl(sl()));
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
@@ -64,6 +71,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ProductUseCase>(ProductUseCase(sl()));
   sl.registerSingleton<ServiceMarketUseCase>(ServiceMarketUseCase(sl()));
   sl.registerSingleton<ServiceAccountUseCase>(ServiceAccountUseCase(sl()));
+  sl.registerSingleton<ServiceStaleUseCase>(ServiceStaleUseCase(sl()));
+
 
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(sl()));
@@ -78,5 +87,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ServiceAddedMarketsBloc>(() => ServiceAddedMarketsBloc(sl()));
   sl.registerFactory<ServiceAccountLeftBloc>(() => ServiceAccountLeftBloc(sl()));
   sl.registerFactory<ServiceAccountReceivedBloc>(() => ServiceAccountReceivedBloc(sl()));
+    sl.registerFactory<ServiceStaleLeftBloc>(() => ServiceStaleLeftBloc(sl()));
+  sl.registerFactory<ServiceStaleReceivedBloc>(() => ServiceStaleReceivedBloc(sl()));
 
 }

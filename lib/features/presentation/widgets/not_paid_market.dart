@@ -24,14 +24,7 @@ class NotPaidMarket extends StatelessWidget {
         tileColor: index.isOdd
             ? GlobalVariables.oddItemColor
             : GlobalVariables.evenItemColor,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(marketName),
-            Text('$totalAmount₺'),
-          ],
-        ),
+        title: Text(marketName),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,10 +35,15 @@ class NotPaidMarket extends StatelessWidget {
             Text('Net Adet: ${givenBread -staleBread}')
           ],
         ),
-        trailing: IconButton(
-            onPressed: onTap,
-            icon: const Icon(Icons.money),
-            color: GlobalVariables.secondaryColor),
+        trailing: Row(
+         mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$totalAmount₺',style:const TextStyle(fontSize: 16,),),
+            IconButton(
+              onPressed: onTap,
+              icon: const Icon(Icons.money),
+              color: GlobalVariables.secondaryColor),]
+        ),
       ),
     );
   }

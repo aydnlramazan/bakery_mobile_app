@@ -15,6 +15,7 @@ import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../widgets/custom_confirmation_dialog.dart';
 import '../bloc/dough_added_products/dough_added_products_bloc.dart';
 import '../bloc/dough_products/dough_products_bloc.dart';
 
@@ -250,7 +251,6 @@ class DoughProductPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return UpdateQuantityDialog(
-            
               controller: controller,
               onSave: (newQuantity) {
                 if (newQuantity == addedProductModel.quantity) {
@@ -290,23 +290,35 @@ class DoughProductPage extends StatelessWidget {
                             quantity: newQuantity),
                         index: index));
               },
-              title: addedProductModel.doughFactoryProductName!);
+              title: "Güncelleme",
+              content:
+                  "${addedProductModel.doughFactoryProductName!} adedini güncellemek için emin misiniz?");
         });
   }
 
   _removeAddedProduct(
       BuildContext context, DoughAddedProductModel addedProduct) {
-    if (listToPost.isNotEmpty) {
-      listToPost.removeWhere((element) =>
-          element.doughFactoryProductId == addedProduct.doughFactoryProductId);
-    }
-    context
-        .read<DoughAddedProductsBloc>()
-        .add(DoughRemoveAddedProductRequested(product: addedProduct));
-    context.read<DoughProductsBloc>().add(DoughAddProductRequested(
-        product: DoughProductModel(
-            id: addedProduct.doughFactoryProductId,
-            name: addedProduct.doughFactoryProductName)));
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:
+                  '${addedProduct.doughFactoryProductName}\'in listeden silmek için emin misiniz?',
+              onTap: () {
+                if (listToPost.isNotEmpty) {
+                  listToPost.removeWhere((element) =>
+                      element.doughFactoryProductId ==
+                      addedProduct.doughFactoryProductId);
+                }
+                context.read<DoughAddedProductsBloc>().add(
+                    DoughRemoveAddedProductRequested(product: addedProduct));
+                context.read<DoughProductsBloc>().add(DoughAddProductRequested(
+                    product: DoughProductModel(
+                        id: addedProduct.doughFactoryProductId,
+                        name: addedProduct.doughFactoryProductName)));
+              });
+        });
   }
 
   _addProductToAddedList(

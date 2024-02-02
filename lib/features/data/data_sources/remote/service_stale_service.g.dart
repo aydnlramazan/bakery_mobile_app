@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'service_services_service.dart';
+part of 'service_stale_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'service_services_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _ServiceServicesApiService implements ServiceServicesApiService {
-  _ServiceServicesApiService(
+class _ServiceStaleService implements ServiceStaleService {
+  _ServiceStaleService(
     this._dio, {
     this.baseUrl,
   }) {
@@ -21,21 +21,21 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<ServiceListModel>>> getServiceServicesByDate(
-      {DateTime? date}) async {
+  Future<HttpResponse<List<ServiceReceivedStaleModel>>>
+      getServiceReceivedStaleByDate({DateTime? date}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ServiceListModel>>>(Options(
+        _setStreamType<HttpResponse<List<ServiceReceivedStaleModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/api/Service/GetByDateServiceList',
+              '/api/StaleBreadReceivedFromMarket/GetStaleBreadReceivedFromMarketByDate',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -45,23 +45,56 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
               baseUrl,
             ))));
     var value = _result.data!
-        .map(
-            (dynamic i) => ServiceListModel.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) =>
+            ServiceReceivedStaleModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
-    print("result: ${httpResponse.data}");
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<dynamic>> addServiceMarkets({
-    int? userId,
-    List<ServiceMarketToAddModel>? marketList,
-  }) async {
+  Future<HttpResponse<List<ServiceStaleModel>>>
+      getServiceNotReceivedStaleByDate({DateTime? date}) async {
+    print("g service date: $date");
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'userId': userId};
+    final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
     final _headers = <String, dynamic>{};
-    final _data = marketList!.map((e) => e.toJson()).toList();
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<HttpResponse<List<ServiceStaleModel>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/StaleBreadReceivedFromMarket/GetNoBreadReceivedMarketListByDate',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    print("result data: ${_result.data}");
+    var value = _result.data!
+        .map((dynamic i) =>
+            ServiceStaleModel.fromJson(i as Map<String, dynamic>))
+        .toList();
+    final httpResponse = HttpResponse(value, _result);
+    print("http response: $httpResponse");
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<dynamic>> addServiceReceivedStale(
+      {ServiceToReceiveStaleModel? serviceToReceiveStaleModel}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(serviceToReceiveStaleModel!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'POST',
@@ -70,7 +103,7 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
     )
             .compose(
               _dio.options,
-              '/api/Service/AddServiceListAndListDetail',
+              '/api/StaleBreadReceivedFromMarket/AddStaleBreadReceivedFromMarket',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -85,75 +118,12 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
   }
 
   @override
-  Future<HttpResponse<List<ServiceAddedMarketModel>>> getAddedMarketsByListId(
-      {int? listId}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'listId': listId};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ServiceAddedMarketModel>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/Service/GetAddedMarketByServiceListId',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            ServiceAddedMarketModel.fromJson(i as Map<String, dynamic>))
-        .toList();
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
-  }
-
-  @override
-  Future<HttpResponse<List<ServiceMarketModel>>> getAvailableMarketsByListId(
-      {int? listId}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'listId': listId};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ServiceMarketModel>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/Service/GetMarketByServiceListId',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            ServiceMarketModel.fromJson(i as Map<String, dynamic>))
-        .toList();
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
-  }
-
-  @override
-  Future<HttpResponse<dynamic>> deleteMarketFromList({int? id}) async {
+  Future<HttpResponse<dynamic>> deleteServiceReceivedStale({int? id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    print("delete id: $queryParameters");
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'DELETE',
@@ -162,7 +132,7 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
     )
             .compose(
               _dio.options,
-              '/api/Service/DeleteServiceListDetail',
+              '/api/StaleBreadReceivedFromMarket/DeleteStaleBreadReceivedFromMarketById',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -177,13 +147,14 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> updateMarketFromList(
-      {ServiceMarketToAddModel? doughListProduct}) async {
+  Future<HttpResponse<dynamic>> updateServiceReceivedStale(
+      {ServiceToReceiveStaleModel? serviceToReceiveStaleModel}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(doughListProduct!.toJson());
+    _data.addAll(serviceToReceiveStaleModel!.toJson());
+    print("Data: $_data");
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'PUT',
@@ -192,7 +163,7 @@ class _ServiceServicesApiService implements ServiceServicesApiService {
     )
             .compose(
               _dio.options,
-              '/api/Service/UpdateServiceListDetail',
+              '/api/StaleBreadReceivedFromMarket/UpdateStaleBreadReceivedFromMarket',
               queryParameters: queryParameters,
               data: _data,
             )

@@ -11,6 +11,7 @@ import '../../../../../core/constants/global_variables.dart';
 import '../../../../data/data_sources/local/shared_preference.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../bloc/service_lists/service_lists_bloc.dart';
+import 'service_stale_page.dart';
 
 class ServiceListPage extends StatefulWidget {
   static const String routeName = "service-list-page";
@@ -50,49 +51,50 @@ class _ServiceListPageState extends State<ServiceListPage> {
       if (state is ServiceListsLoading) {
         return const LoadingIndicator();
       }
-      if(state is ServiceListsSuccess){
-      if (state.serviceLists != null && state.serviceLists!.isNotEmpty) {
-       return ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: state.serviceLists!.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: GlobalVariables.secondaryColorLight,
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(
-                        (index + 1).toString(),
-                        style: const TextStyle(
-                            fontSize: 18, color: GlobalVariables.secondaryColor),
+      if (state is ServiceListsSuccess) {
+        if (state.serviceLists != null && state.serviceLists!.isNotEmpty) {
+          return ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: state.serviceLists!.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: GlobalVariables.secondaryColorLight,
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        child: Text(
+                          (index + 1).toString(),
+                          style: const TextStyle(
+                              fontSize: 18,
+                              color: GlobalVariables.secondaryColor),
+                        ),
                       ),
+                      title: const Text(
+                        "Servis",
+                        textScaleFactor: 1.2,
+                      ),
+                      subtitle: Text(
+                        getFormattedDateTime(state.serviceLists![index].date!),
+                      ),
+                      onTap: () async {
+                        bool result =
+                            await canEdit(state.serviceLists![index].userId!);
+                        Navigator.pushNamed(
+                            context, ServiceMarketsPage.routeName, arguments: {
+                          0: state.serviceLists![index].id,
+                          1: result
+                        });
+                      },
                     ),
-                    title: const Text(
-                      "Servis",
-                      textScaleFactor: 1.2,
-                    ),
-                    subtitle: Text(
-                      getFormattedDateTime(state.serviceLists![index].date!),
-                    ),
-                    onTap: () async {
-                      bool result =
-                          await canEdit(state.serviceLists![index].userId!);
-                      Navigator.pushNamed(context, ServiceMarketsPage.routeName,
-                          arguments: {
-                            0: state.serviceLists![index].id,
-                            1: result
-                          });
-                    },
                   ),
-                ),
-              );
-            });
+                );
+              });
+        }
       }
-           }
       return const EmptyContent();
     });
   }
@@ -155,20 +157,40 @@ class _ServiceListPageState extends State<ServiceListPage> {
                 Navigator.pushNamed(context, ServiceAccountPage.routeName);
               },
               backgroundColor: GlobalVariables.secondaryColor,
-              tooltip: 'Service Account',
+              tooltip: 'Servis Hesabı',
               child: const Icon(
                 Icons.calculate,
                 color: Colors.white,
               ),
             ),
             FloatingActionButton(
+              heroTag: "Service Stale Bread",
               onPressed: () {
-                Navigator.pushNamed(context, ServiceMarketsPage.routeName,
-                    arguments: {0: 0, 1: true});
+                Navigator.pushNamed(context, ServiceStalePage.routeName);
+              },
+              backgroundColor: GlobalVariables.secondaryColor,
+              tooltip: 'Bayat Ekmek',
+              child: const Icon(
+                Icons.replay,
+                color: Colors.white,
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                    context, ServiceMarketsPage.routeName, arguments: {
+                  0: 0,
+                  1: true
+                }).then((value) => setState(
+                      () {
+                        context.read<ServiceListsBloc>().add(
+                            ServiceGetListsRequested(dateTime: selectedDate!));
+                      },
+                    ));
               },
               backgroundColor: GlobalVariables.secondaryColor,
               heroTag: 'Add Service List',
-              tooltip: 'Add Service List',
+              tooltip: 'Yeni Servis Ekle',
               child: const Icon(
                 Icons.add,
                 color: Colors.white,

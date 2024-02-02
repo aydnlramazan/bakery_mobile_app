@@ -20,8 +20,7 @@ part 'service_account_received_state.dart';
 class ServiceAccountReceivedBloc
     extends Bloc<ServiceAccountReceivedEvent, ServiceAccountReceivedState> {
   final ServiceAccountUseCase _serviceAccountUseCase;
-  ServiceAccountReceivedBloc(this._serviceAccountUseCase)
-      : super(const ServiceAccountReceivedLoading()) {
+  ServiceAccountReceivedBloc(this._serviceAccountUseCase) : super(const ServiceAccountReceivedLoading()) {
     on<ServiceGetAccountReceivedRequested>(onGetServiceAccountReceived);
     on<ServiceRemoveAccountReceivedRequested>(onRemoveServiceAccountReceived);
     on<ServiceUpdateAccountReceivedRequested>(onUpdateServiceAccountReceived);
@@ -55,13 +54,10 @@ class ServiceAccountReceivedBloc
         marketId: event.serviceAccountReceivedModel.marketId,
         date: DateTime.now());
 
-    final dataState = await _serviceAccountUseCase
-        .deleteServiceAccountReceived(serviceReceived);
+    final dataState = await _serviceAccountUseCase.deleteServiceAccountReceived(serviceReceived);
 
     if (dataState is DataSuccess) {
-      emit(ServiceAccountReceivedSuccess(
-          serviceAccountReceived: [...?state.serviceAccountReceived]
-            ..remove(event.serviceAccountReceivedModel)));
+      emit(ServiceAccountReceivedSuccess(serviceAccountReceived: [...?state.serviceAccountReceived]..remove(event.serviceAccountReceivedModel)));
       event.context
           .read<ServiceAccountLeftBloc>()
           .add(ServiceGetAccountLeftRequested(date: DateTime.now()));

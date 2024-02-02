@@ -20,6 +20,7 @@ final class ServiceAccountReceivedFailure extends ServiceAccountReceivedState {
 
 final class ServiceAccountReceivedSuccess extends ServiceAccountReceivedState {
   
+  @override
   final List<ServiceAccountReceivedModel>? serviceAccountReceived;
   const ServiceAccountReceivedSuccess({this.serviceAccountReceived});
   @override

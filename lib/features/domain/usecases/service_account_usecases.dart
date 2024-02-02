@@ -8,8 +8,7 @@ import '../entities/service_account_to_receive.dart';
 class ServiceAccountUseCase {
   final ServiceAccountRepository _serviceAccountRepository;
   ServiceAccountUseCase(this._serviceAccountRepository);
-  Future<DataState<List<ServiceAccountReceivedEntity>>>
-      getServiceAccountReceivedByDate(DateTime date) async {
+  Future<DataState<List<ServiceAccountReceivedEntity>>>getServiceAccountReceivedByDate(DateTime date) async {
     return await _serviceAccountRepository
         .getServiceAccountReceivedByDate(date);
   }

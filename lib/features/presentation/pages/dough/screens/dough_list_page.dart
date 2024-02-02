@@ -98,8 +98,17 @@ class _DoughListPageState extends State<DoughListPage> {
     if (todayDate) {
       return FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, DoughProductPage.routeName,
-              arguments: {0: 0, 1: true});
+          Navigator.pushNamed(context, DoughProductPage.routeName, arguments: {
+            0: 0,
+            1: true
+          }).then((value) => setState(
+                () {
+                  context
+                      .read<DoughFactoryBloc>()
+                      .add(DoughGetListsRequested(dateTime: selectedDate!));
+                },
+              ));
+          ;
         },
         backgroundColor: GlobalVariables.secondaryColor,
         tooltip: 'Add Dough List',

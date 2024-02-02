@@ -8,6 +8,8 @@ import 'package:bakery_app/features/presentation/pages/service/screens/service_l
 import 'package:bakery_app/features/presentation/pages/service/screens/service_markets_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../features/presentation/pages/service/screens/service_stale_page.dart';
+
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
     case LoginPage.routeName:
@@ -32,8 +34,9 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
           settings: routeSettings, builder: (_) => const ServiceAccountPage());
     case ServiceListPage.routeName:
-      return MaterialPageRoute(
-          settings: routeSettings, builder: (_) => const ServiceListPage());
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceListPage());
+    case ServiceStalePage.routeName:
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceStalePage());  
     case DoughListPage.routeName:
       return MaterialPageRoute(
           settings: routeSettings, builder: (_) => const DoughListPage());

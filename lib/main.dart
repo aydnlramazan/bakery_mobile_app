@@ -26,6 +26,8 @@ import 'features/presentation/pages/production/bloc/added_products/added_product
 import 'features/presentation/pages/production/bloc/products/product_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_received/service_account_received_bloc.dart';
+import 'features/presentation/pages/service/bloc/service_stale_left/service_stale_left_bloc.dart';
+import 'features/presentation/pages/service/bloc/service_stale_received/service_stale_received_bloc.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -76,6 +78,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ServiceAccountReceivedBloc>(
           create: (context) => ServiceAccountReceivedBloc(sl()),
+        ),
+              BlocProvider<ServiceStaleLeftBloc>(
+          create: (context) => ServiceStaleLeftBloc(sl()),
+        ),
+        BlocProvider<ServiceStaleReceivedBloc>(
+          create: (context) => ServiceStaleReceivedBloc(sl()),
         ),
       ],
       child: MaterialApp(

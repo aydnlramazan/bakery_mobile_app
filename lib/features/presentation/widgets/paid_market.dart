@@ -27,12 +27,10 @@ class PaidMarket extends StatelessWidget {
             ? GlobalVariables.oddItemColor
             : GlobalVariables.evenItemColor,
 
-        title: Row(
-           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+        title: 
             Text(marketName),
-            Row(
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   onPressed: onEditPressed,
@@ -40,14 +38,14 @@ class PaidMarket extends StatelessWidget {
                   color: GlobalVariables.secondaryColor,
                 ),
                 IconButton(
+                
                   onPressed: onDeletePressed,
                   icon: const Icon(Icons.delete),
                   color: GlobalVariables.secondaryColor,
                 ),
               ],
             ),
-          ],
-        ),
+       
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

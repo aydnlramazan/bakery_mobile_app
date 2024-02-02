@@ -6,7 +6,6 @@ import '../../../../core/constants/constants.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
-import '../../../domain/entities/service_account_received.dart';
 import '../../models/service_account_to_receive.dart';
 
 part 'service_account_service.g.dart';

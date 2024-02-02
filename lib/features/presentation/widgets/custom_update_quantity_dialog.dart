@@ -6,8 +6,10 @@ class UpdateQuantityDialog extends StatelessWidget {
   final TextEditingController controller;
   final Function(int) onSave;
   final String title;
+  final String content;
   const UpdateQuantityDialog(
       {super.key,
+      required this.content,
       required this.controller,
       required this.onSave,
       required this.title});
@@ -16,9 +18,11 @@ class UpdateQuantityDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
+
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Text(content),
           TextField(
             controller: controller,
             keyboardType: TextInputType.number,

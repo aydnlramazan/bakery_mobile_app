@@ -7,10 +7,7 @@ final class ServiceGetAccountLeftRequested extends ServiceAccountLeftEvent {
   ServiceGetAccountLeftRequested({required this.date});
 }
 
-final class ServiceRemoveAccountLeftRequested extends ServiceAccountLeftEvent {
-  final ServiceAccountLeftModel serviceAccountLeftModel;
-  ServiceRemoveAccountLeftRequested({required this.serviceAccountLeftModel});
-}
+
 
 final class ServicePostAccountLeftRequested extends ServiceAccountLeftEvent {
   final BuildContext context;

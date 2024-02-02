@@ -11,6 +11,7 @@ import '../../../../data/data_sources/local/shared_preference.dart';
 import '../../../widgets/added_product.dart';
 import '../../../widgets/available_product.dart';
 import '../../../widgets/custom_app_bar.dart';
+import '../../../widgets/custom_confirmation_dialog.dart';
 import '../../../widgets/custom_save_button.dart';
 import '../../../widgets/custom_update_quantity_dialog.dart';
 import '../../../widgets/editable_added_product.dart';
@@ -30,7 +31,7 @@ class ServiceMarketsPage extends StatelessWidget {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: CustomAppBar(
-          title: "Servis",
+          title: "Servis Dağıtımı",
           onTap: () {
             Navigator.pop(context);
           },
@@ -174,8 +175,7 @@ class ServiceMarketsPage extends StatelessWidget {
 
   _getAvailableMarkets(BuildContext context) {
     List<TextEditingController> controllers = List.empty(growable: true);
-    context
-        .read<ServiceMarketsBloc>()
+    context.read<ServiceMarketsBloc>()
         .add(ServiceGetMarketsRequested(listId: listId));
 
     return BlocBuilder<ServiceMarketsBloc, ServiceMarketsState>(
@@ -228,9 +228,16 @@ class ServiceMarketsPage extends StatelessWidget {
     }));
   }
 
-  _removeAddedProduct(
-      BuildContext context, ServiceAddedMarketModel addedMarket) {
-    if (listToPost.isNotEmpty) {
+  _removeAddedProduct(BuildContext context, ServiceAddedMarketModel addedMarket) {
+     showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:
+                  '${addedMarket.marketName}\'in verilen servisi silmek için emin misiniz?',
+              onTap: () {
+                 if (listToPost.isNotEmpty) {
       listToPost
           .removeWhere((element) => element.marketId == addedMarket.marketId);
     }
@@ -238,8 +245,10 @@ class ServiceMarketsPage extends StatelessWidget {
         .read<ServiceAddedMarketsBloc>()
         .add(ServiceRemoveAddedMarketRequested(market: addedMarket));
     context.read<ServiceMarketsBloc>().add(ServiceAddMarketRequested(
-        market: ServiceMarketModel(
-            id: addedMarket.marketId, name: addedMarket.marketName)));
+        market: ServiceMarketModel(id: addedMarket.marketId, name: addedMarket.marketName)));
+              });
+        });
+   
   }
 
   _addProductToAddedList(
@@ -311,7 +320,9 @@ class ServiceMarketsPage extends StatelessWidget {
                             quantity: newQuantity),
                         index: index));
               },
-              title: addedMarketModel.marketName!);
+              title: "Güncelleme",
+              content: "${addedMarketModel.marketName} market'e verilen ekmek adedini güncellemek için emin misiniz?",
+              );
         });
   }
 }
