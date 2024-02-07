@@ -80,8 +80,7 @@ class ServiceAccountReceivedBloc
             amount: event.serviceAccountReceivedModel.amount,
             marketId: event.serviceAccountReceivedModel.marketId,
             date: DateTime.now());
-        final dataState = await _serviceAccountUseCase
-            .updateServiceAccountReceived(serviceReceived);
+        final dataState = await _serviceAccountUseCase.updateServiceAccountReceived(serviceReceived);
         if (dataState is DataSuccess) {
           emit(ServiceAccountReceivedSuccess(serviceAccountReceived: [
             ...state.serviceAccountReceived!.map((element) =>

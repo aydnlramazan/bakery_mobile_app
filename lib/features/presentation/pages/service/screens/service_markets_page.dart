@@ -209,7 +209,7 @@ class ServiceMarketsPage extends StatelessWidget {
                             controller: controllers[index],
                             index: index,
                             onPressed: () {
-                              if (controllers[index].text.isNotEmpty) {
+                              if (controllers[index].text.isNotEmpty && controllers[index].text != "0") {
                                 _addProductToAddedList(
                                     context,
                                     state.markets![index],

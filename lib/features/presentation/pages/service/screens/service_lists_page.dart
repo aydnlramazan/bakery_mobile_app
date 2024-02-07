@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:bakery_app/features/presentation/pages/service/screens/service_account_page.dart';
+import 'package:bakery_app/features/presentation/pages/service/screens/service_debt_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_markets_page.dart';
 import 'package:bakery_app/features/presentation/widgets/empty_content.dart';
 import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart';
@@ -106,6 +107,17 @@ class _ServiceListPageState extends State<ServiceListPage> {
         title: "Servis",
         date: date,
         onTap: _selectDate,
+        additionalMenuItems: const [
+          PopupMenuItem<String>(
+            value: 'debt',
+            child: Text('Borçlar'),
+          ),
+        ],
+        onMenuItemSelected: (value) {
+          if (value == 'debt') {
+            Navigator.pushNamed(context, ServiceDebtPage.routeName);
+          }
+        },
       ),
     );
   }

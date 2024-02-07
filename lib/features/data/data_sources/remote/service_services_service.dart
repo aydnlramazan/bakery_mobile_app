@@ -35,6 +35,5 @@ abstract class ServiceServicesApiService {
   Future<HttpResponse> deleteMarketFromList({@Query("id") int id});
 
   @PUT("/api/Service/UpdateServiceListDetail")
-  Future<HttpResponse> updateMarketFromList(
-      {@Body() ServiceMarketToAddModel doughListProduct});
+  Future<HttpResponse> updateMarketFromList({@Body() ServiceMarketToAddModel doughListProduct});
 }

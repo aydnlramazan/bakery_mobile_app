@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../core/utils/toast_message.dart';
-
 class CustomPaymentDialog extends StatelessWidget {
   final String title;
   final String? firstText;
@@ -44,11 +42,8 @@ class CustomPaymentDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            double newQuantity = double.tryParse(controller.text) ?? 0;
-            if (newQuantity == 0) {
-              showToastMessage("Bir sayı girmelisin!");
-              return;
-            }
+            double newQuantity = double.tryParse(controller.text) ?? 0.0;
+       
             onSave(newQuantity);
             Navigator.of(context).pop();
           },

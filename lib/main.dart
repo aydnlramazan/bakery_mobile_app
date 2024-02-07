@@ -26,6 +26,8 @@ import 'features/presentation/pages/production/bloc/added_products/added_product
 import 'features/presentation/pages/production/bloc/products/product_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_received/service_account_received_bloc.dart';
+import 'features/presentation/pages/service/bloc/service_debt/service_debt_bloc.dart';
+import 'features/presentation/pages/service/bloc/service_debt_detail/service_debt_detail_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_stale_left/service_stale_left_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_stale_received/service_stale_received_bloc.dart';
 
@@ -84,6 +86,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ServiceStaleReceivedBloc>(
           create: (context) => ServiceStaleReceivedBloc(sl()),
+        ),
+          BlocProvider<ServiceDebtBloc>(
+          create: (context) => ServiceDebtBloc(sl()),
+        ),
+        BlocProvider<ServiceDebtDetailBloc>(
+          create: (context) => ServiceDebtDetailBloc(sl()),
         ),
       ],
       child: MaterialApp(

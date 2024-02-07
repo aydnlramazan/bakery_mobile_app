@@ -104,10 +104,8 @@ class ServiceAccountPage extends StatelessWidget {
     }));
   }
 
-  _showPaymentDialog(
-      BuildContext context, ServiceAccountLeftModel accountLeftModel) {
-    TextEditingController controller =
-        TextEditingController(text: accountLeftModel.totalAmount.toString());
+  _showPaymentDialog(BuildContext context, ServiceAccountLeftModel accountLeftModel) {
+    TextEditingController controller =TextEditingController(text: accountLeftModel.totalAmount.toString());
 
     showDialog(
         context: context,
@@ -168,7 +166,7 @@ class ServiceAccountPage extends StatelessWidget {
                                 state.serviceAccountReceived![index].amount,
                             onEditPressed: () {
                               _updateReceivedMarket(context,
-                                  state.serviceAccountReceived![index], index);
+                                  state.serviceAccountReceived![index]);
                             },
                             onDeletePressed: () {
                               _removeReceivedMarket(context,
@@ -184,10 +182,8 @@ class ServiceAccountPage extends StatelessWidget {
     }));
   }
 
-  _updateReceivedMarket(BuildContext context,
-      ServiceAccountReceivedModel receivedModel, int index) {
-    TextEditingController controller =
-        TextEditingController(text: receivedModel.amount.toString());
+  _updateReceivedMarket(BuildContext context,ServiceAccountReceivedModel receivedModel) {
+    TextEditingController controller =TextEditingController(text: receivedModel.amount.toString());
     showDialog(
         context: context,
         builder: (BuildContext context) {

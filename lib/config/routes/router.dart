@@ -4,6 +4,7 @@ import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_product_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_account_page.dart';
+import 'package:bakery_app/features/presentation/pages/service/screens/service_debt_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_lists_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_markets_page.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,8 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceListPage());
     case ServiceStalePage.routeName:
       return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceStalePage());  
+    case ServiceDebtPage.routeName:
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceDebtPage());  
     case DoughListPage.routeName:
       return MaterialPageRoute(
           settings: routeSettings, builder: (_) => const DoughListPage());
