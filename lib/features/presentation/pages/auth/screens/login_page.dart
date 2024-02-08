@@ -128,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
       case 4:
         _navigateToPage(ServiceListPage.routeName, null);
       case 5:
-        _navigateToPage(SellAssistancePage.routeName, null);
+        _navigateToPage(SellAssistancePage.routeName, user);
       default:
         _navigateToPage(LoginPage.routeName, null);
     }

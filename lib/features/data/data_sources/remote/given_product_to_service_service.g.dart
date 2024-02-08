@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'expense_service.dart';
+part of 'given_product_to_service_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'expense_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _ExpenseService implements ExpenseService {
-  _ExpenseService(
+class _GivenProductToService implements GivenProductToService {
+  _GivenProductToService(
     this._dio, {
     this.baseUrl,
   }) {
@@ -21,21 +21,29 @@ class _ExpenseService implements ExpenseService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<ExpenseModel>>> getExpenseListByDate(
-      { DateTime? date}) async {
+  Future<HttpResponse<List<GivenProductToServiceModel>>>
+      getGivenProductToServiceListByDateAndServiceType({
+    DateTime? date,
+    int? servisTypeId,
+  }) async {
+    print('Date: $date');
+    print('serviceType: $servisTypeId');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
+    final queryParameters = <String, dynamic>{
+      r'date': date!.toIso8601String(),
+      r'servisTypeId': servisTypeId,
+    };
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ExpenseModel>>>(Options(
+        _setStreamType<HttpResponse<List<GivenProductToServiceModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/api/Expense/GetExpensesByDate',
+              '/api/GivenProductsToService/GetGivenProductsToServiceByDateAndServisTypeId',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -45,20 +53,21 @@ class _ExpenseService implements ExpenseService {
               baseUrl,
             ))));
     var value = _result.data!
-        .map((dynamic i) => ExpenseModel.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) =>
+            GivenProductToServiceModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<dynamic>> addExpense(
-      { ExpenseModel? expense}) async {
+  Future<HttpResponse<dynamic>> addGivenProductToService(
+      {GivenProductToServiceModel? givenProductToService}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(expense!.toJson());
+    _data.addAll(givenProductToService!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'POST',
@@ -67,7 +76,7 @@ class _ExpenseService implements ExpenseService {
     )
             .compose(
               _dio.options,
-              '/api/Expense/AddExpense',
+              '/api/GivenProductsToService/AddGivenProductsToService',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -82,7 +91,8 @@ class _ExpenseService implements ExpenseService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> deleteExpense({ int? id}) async {
+  Future<HttpResponse<dynamic>> deleteGivenProductToService({int? id}) async {
+   
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
@@ -95,7 +105,7 @@ class _ExpenseService implements ExpenseService {
     )
             .compose(
               _dio.options,
-              '/api/Expense/DeleteExpense',
+              '/api/GivenProductsToService/DeleteGivenProductsToServiceById',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -110,13 +120,13 @@ class _ExpenseService implements ExpenseService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> updateExpense(
-      { ExpenseModel? expense}) async {
+  Future<HttpResponse<dynamic>> updateGivenProductToService(
+      {GivenProductToServiceModel? givenProductToService}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(expense!.toJson());
+    _data.addAll(givenProductToService!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'PUT',
@@ -125,7 +135,7 @@ class _ExpenseService implements ExpenseService {
     )
             .compose(
               _dio.options,
-              '/api/Expense/UpdateExpense',
+              '/api/GivenProductsToService/UpdateGivenProductsToService',
               queryParameters: queryParameters,
               data: _data,
             )

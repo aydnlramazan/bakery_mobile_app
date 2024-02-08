@@ -1,20 +1,24 @@
-
 import 'dart:io';
 
 import 'package:bakery_app/core/resources/data_state.dart';
-import 'package:bakery_app/features/data/data_sources/remote/expense_service.dart';
-import 'package:bakery_app/features/data/models/expense.dart';
-import 'package:bakery_app/features/domain/entities/expense.dart';
-import 'package:bakery_app/features/domain/repositories/expense_repository.dart';
+import 'package:bakery_app/features/data/data_sources/remote/given_product_to_service_service.dart';
+import 'package:bakery_app/features/data/models/given_product_to_service.dart';
+import 'package:bakery_app/features/domain/entities/given_product_to_service.dart';
+import 'package:bakery_app/features/domain/repositories/given_product_to_service_repository.dart';
 import 'package:dio/dio.dart';
 
-class ExpenseRepositoryImpl extends ExpenseRepository{
-  final ExpenseService _expenseService;
-  ExpenseRepositoryImpl(this._expenseService);
+class GivenProductToServiceRepositoryImpl
+    extends GivenProductToServiceRepository {
+  final GivenProductToService _givenProductToService;
+  GivenProductToServiceRepositoryImpl(this._givenProductToService);
   @override
-  Future<DataState<void>> addExpense(ExpenseEntity expense) async{
- try {
-      final httpResponse = await _expenseService.addExpense(expense: ExpenseModel.fromEntity(expense));
+  Future<DataState<void>> addGivenProductToService(
+      GivenProductToServiceEntity givenProductToService) async {
+    try {
+      final httpResponse =
+          await _givenProductToService.addGivenProductToService(
+              givenProductToService:
+                  GivenProductToServiceModel.fromEntity(givenProductToService));
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -31,9 +35,11 @@ class ExpenseRepositoryImpl extends ExpenseRepository{
   }
 
   @override
-  Future<DataState<void>> deleteExpense(int id)async {
- try {
-      final httpResponse = await _expenseService.deleteExpense(id: id);
+  Future<DataState<void>> deleteGivenProductToService(int id) async {
+    try {
+      print('id: $id');
+      final httpResponse =
+          await _givenProductToService.deleteGivenProductToService(id: id);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -50,9 +56,13 @@ class ExpenseRepositoryImpl extends ExpenseRepository{
   }
 
   @override
-  Future<DataState<List<ExpenseEntity>>> getExpenseListByDate(DateTime date)async {
-   try {
-      final httpResponse = await _expenseService.getExpenseListByDate(date: date);
+  Future<DataState<List<GivenProductToServiceEntity>>>
+      getGivenProductToServiceListByDateAndServiceType(
+          DateTime date, int servisTypeId) async {
+    try {
+      final httpResponse = await _givenProductToService
+          .getGivenProductToServiceListByDateAndServiceType(
+              date: date, servisTypeId: servisTypeId);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -69,9 +79,13 @@ class ExpenseRepositoryImpl extends ExpenseRepository{
   }
 
   @override
-  Future<DataState<void>> updateExpense(ExpenseEntity expense)async {
- try {
-      final httpResponse = await _expenseService.updateExpense(expense: ExpenseModel.fromEntity(expense));
+  Future<DataState<void>> updateGivenProductToService(
+      GivenProductToServiceEntity givenProductToService) async {
+    try {
+      final httpResponse =
+          await _givenProductToService.updateGivenProductToService(
+              givenProductToService:
+                  GivenProductToServiceModel.fromEntity(givenProductToService));
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -86,5 +100,4 @@ class ExpenseRepositoryImpl extends ExpenseRepository{
       throw e;
     }
   }
-  
 }

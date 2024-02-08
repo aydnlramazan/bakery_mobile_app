@@ -17,7 +17,8 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
     case LoginPage.routeName:
       return MaterialPageRoute(settings: routeSettings, builder: (_) => const LoginPage());
      case SellAssistancePage.routeName:
-      return MaterialPageRoute(settings: routeSettings, builder: (_) => const SellAssistancePage());
+     var args = routeSettings.arguments as UserModel;
+      return MaterialPageRoute(settings: routeSettings, builder: (_) =>  SellAssistancePage(user: args,));
     case ProductionPage.routeName:
       var args = routeSettings.arguments as UserModel;
       return MaterialPageRoute(
