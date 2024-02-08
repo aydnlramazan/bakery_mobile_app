@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'service_account_service.dart';
+part of 'expense_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'service_account_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _ServiceAccountService implements ServiceAccountService {
-  _ServiceAccountService(
+class _ExpenseService implements ExpenseService {
+  _ExpenseService(
     this._dio, {
     this.baseUrl,
   }) {
@@ -21,79 +21,44 @@ class _ServiceAccountService implements ServiceAccountService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<ServiceAccountReceivedModel>>>
-      getServiceAccountReceivedByDate({DateTime? date}) async {
+  Future<HttpResponse<List<ExpenseModel>>> getExpenseListByDate(
+      { DateTime? date}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ServiceAccountReceivedModel>>>(
-            Options(
+        _setStreamType<HttpResponse<List<ExpenseModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-                .compose(
-                  _dio.options,
-                  '/api/MoneyReceivedFromMarket/GetMoneyReceivedMarketListByDate',
-                  queryParameters: queryParameters,
-                  data: _data,
-                )
-                .copyWith(
-                    baseUrl: _combineBaseUrls(
-                  _dio.options.baseUrl,
-                  baseUrl,
-                ))));
+            .compose(
+              _dio.options,
+              '/api/Expense/GetExpenseByDate',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     var value = _result.data!
-        .map((dynamic i) =>
-            ServiceAccountReceivedModel.fromJson(i as Map<String, dynamic>))
+        .map((dynamic i) => ExpenseModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<List<ServiceAccountLeftModel>>>
-      getServiceAccountLeftByDate({DateTime? date}) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
-    final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ServiceAccountLeftModel>>>(
-            Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-                .compose(
-                  _dio.options,
-                  '/api/MoneyReceivedFromMarket/GetNotMoneyReceivedMarketListByDate',
-                  queryParameters: queryParameters,
-                  data: _data,
-                )
-                .copyWith(
-                    baseUrl: _combineBaseUrls(
-                  _dio.options.baseUrl,
-                  baseUrl,
-                ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            ServiceAccountLeftModel.fromJson(i as Map<String, dynamic>))
-        .toList();
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
-  }
-
-  @override
-  Future<HttpResponse<dynamic>> addServiceAccountReceived(
-      {ServiceAccountToReceiveModel? serviceAccountReceivedModel}) async {
+  Future<HttpResponse<dynamic>> addExpense(
+      { ExpenseModel? expense}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(serviceAccountReceivedModel!.toJson());
+    _data.addAll(expense!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'POST',
@@ -102,7 +67,7 @@ class _ServiceAccountService implements ServiceAccountService {
     )
             .compose(
               _dio.options,
-              '/api/MoneyReceivedFromMarket/AddMoneyReceivedFromMarket',
+              '/api/Expense/AddExpense',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -117,13 +82,11 @@ class _ServiceAccountService implements ServiceAccountService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> deleteServiceAccountReceived(
-      {ServiceAccountToReceiveModel? serviceAccountReceivedModel}) async {
+  Future<HttpResponse<dynamic>> deleteExpense({ int? id}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(serviceAccountReceivedModel!.toJson());
+    final Map<String, dynamic>? _data = null;
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'DELETE',
@@ -132,7 +95,7 @@ class _ServiceAccountService implements ServiceAccountService {
     )
             .compose(
               _dio.options,
-              '/api/MoneyReceivedFromMarket/DeleteMoneyReceivedFromMarket',
+              '/api/Expense/DeleteExpense',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -147,13 +110,13 @@ class _ServiceAccountService implements ServiceAccountService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> updateServiceAccountReceived(
-      {ServiceAccountToReceiveModel? serviceAccountReceivedModel}) async {
+  Future<HttpResponse<dynamic>> updateExpense(
+      { ExpenseModel? expense}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(serviceAccountReceivedModel!.toJson());
+    _data.addAll(expense!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'PUT',
@@ -162,7 +125,7 @@ class _ServiceAccountService implements ServiceAccountService {
     )
             .compose(
               _dio.options,
-              '/api/MoneyReceivedFromMarket/UpdateMoneyReceivedFromMarket',
+              '/api/Expense/UpdateExpense',
               queryParameters: queryParameters,
               data: _data,
             )

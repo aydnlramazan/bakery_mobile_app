@@ -3,6 +3,7 @@ import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.d
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_product_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_account_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_debt_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_lists_page.dart';
@@ -14,8 +15,9 @@ import '../../features/presentation/pages/service/screens/service_stale_page.dar
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
     case LoginPage.routeName:
-      return MaterialPageRoute(
-          settings: routeSettings, builder: (_) => const LoginPage());
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => const LoginPage());
+     case SellAssistancePage.routeName:
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => const SellAssistancePage());
     case ProductionPage.routeName:
       var args = routeSettings.arguments as UserModel;
       return MaterialPageRoute(

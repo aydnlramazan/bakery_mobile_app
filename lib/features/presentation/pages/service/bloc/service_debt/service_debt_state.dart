@@ -4,7 +4,7 @@ part of 'service_debt_bloc.dart';
 sealed class ServiceDebtState extends Equatable {
   const ServiceDebtState();
   get serviceTotalDebtList => null;
-  get serviceDebtDetailList => null;
+
 }
 
 final class ServiceDebtLoading extends ServiceDebtState {
@@ -24,13 +24,12 @@ final class ServiceDebtFailure extends ServiceDebtState {
 final class ServiceTotalDebtSuccess extends ServiceDebtState {
   @override
   final List<ServiceDebtTotalModel>? serviceTotalDebtList;
-  @override
-  final List<ServiceDebtDetailModel>? serviceDebtDetailList;
+  
   const ServiceTotalDebtSuccess(
-      {this.serviceTotalDebtList, this.serviceDebtDetailList});
+      {this.serviceTotalDebtList});
 
   @override
-  List<Object?> get props => [serviceTotalDebtList, serviceDebtDetailList];
+  List<Object?> get props => [serviceTotalDebtList];
 }
 
 

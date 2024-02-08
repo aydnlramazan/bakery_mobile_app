@@ -16,15 +16,15 @@ class ServiceDebtBloc extends Bloc<ServiceDebtEvent, ServiceDebtState> {
   ServiceDebtBloc(this._serviceDebtUseCase)
       : super(const ServiceDebtLoading()) {
     on<ServiceGetTotalDebtList>(onGetTotalDebtList);
-
     on<ServicePostDebtPayment>(onPostDebtPayment);
   }
+
   void onGetTotalDebtList(
       ServiceGetTotalDebtList event, Emitter<ServiceDebtState> emit) async {
     emit(const ServiceDebtLoading());
     final dataState = await _serviceDebtUseCase.getServiceDebtMarketsList();
 
-    if (dataState is DataSuccess && dataState.data != null) {
+    if (dataState is DataSuccess) {
        List<ServiceDebtTotalModel> serviceTotalDebtList = dataState.data as List<ServiceDebtTotalModel>;
 
   serviceTotalDebtList.sort((a, b) => b.amount.compareTo(a.amount));

@@ -127,54 +127,56 @@ class ServiceDebtPage extends StatelessWidget {
                           child: ListView.builder(
                             itemCount: state.serviceDebtDetailList!.length,
                             itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: state
-                                          .serviceDebtDetailList![index]
-                                          .amount
-                                          .isNegative
-                                      ? Colors.green
-                                      : Colors.red,
+                              return Material(
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundColor: state
+                                            .serviceDebtDetailList![index]
+                                            .amount
+                                            .isNegative
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state
+                                      .serviceDebtDetailList![index].amount
+                                      .toString()),
+                                  subtitle: Text(getFormattedDateTime(
+                                      state.serviceDebtDetailList![index].date)),
+                                  trailing: isToday(state
+                                          .serviceDebtDetailList![index].date)
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _updatePaidDebt(
+                                                        context,
+                                                        state.serviceDebtDetailList![
+                                                            index],
+                                                        serviceDebtTotalModel
+                                                            .amount);
+                                                  },
+                                                  icon: const Icon(Icons.edit),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _deletePaidDebt(
+                                                        context,
+                                                        state.serviceDebtDetailList![
+                                                            index],
+                                                        serviceDebtTotalModel
+                                                            .marketName);
+                                                  },
+                                                  icon: const Icon(Icons.delete),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                            ])
+                                      : null,
                                 ),
-                                tileColor: index.isOdd
-                                    ? GlobalVariables.oddItemColor
-                                    : GlobalVariables.evenItemColor,
-                                title: Text(state
-                                    .serviceDebtDetailList![index].amount
-                                    .toString()),
-                                subtitle: Text(getFormattedDateTime(
-                                    state.serviceDebtDetailList![index].date)),
-                                trailing: isToday(state
-                                        .serviceDebtDetailList![index].date)
-                                    ? Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                            IconButton(
-                                                onPressed: () {
-                                                  _updatePaidDebt(
-                                                      context,
-                                                      state.serviceDebtDetailList![
-                                                          index],
-                                                      serviceDebtTotalModel
-                                                          .amount);
-                                                },
-                                                icon: const Icon(Icons.edit),
-                                                color: GlobalVariables
-                                                    .secondaryColor),
-                                            IconButton(
-                                                onPressed: () {
-                                                  _deletePaidDebt(
-                                                      context,
-                                                      state.serviceDebtDetailList![
-                                                          index],
-                                                      serviceDebtTotalModel
-                                                          .marketName);
-                                                },
-                                                icon: const Icon(Icons.delete),
-                                                color: GlobalVariables
-                                                    .secondaryColor),
-                                          ])
-                                    : null,
                               );
                             },
                           ),

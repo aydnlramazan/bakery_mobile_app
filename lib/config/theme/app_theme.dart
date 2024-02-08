@@ -6,6 +6,7 @@ ThemeData theme() {
   return ThemeData(
     colorScheme: ColorScheme.fromSeed(seedColor: GlobalVariables.secondaryColor),
     useMaterial3: true,
+    dividerColor: Colors.transparent,
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: appBarTheme()
     

@@ -3,6 +3,7 @@ import 'package:bakery_app/core/utils/user_login_params.dart';
 import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_lists_page.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_button.dart';
 import 'package:bakery_app/features/presentation/widgets/custom_textfield.dart';
@@ -29,10 +30,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-        systemOverlayStyle:const SystemUiOverlayStyle(statusBarColor: GlobalVariables.secondaryColor),
+      appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: GlobalVariables.secondaryColor),
         elevation: 0,
-      //  backgroundColor: const Color.fromARGB(115, 233, 233, 233),
+        //  backgroundColor: const Color.fromARGB(115, 233, 233, 233),
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -57,8 +59,8 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
           return Container(
-            padding: const EdgeInsets.only(left:18.0,right: 18.0),
-          // color: const Color.fromARGB(115, 233, 233, 233),
+            padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+            // color: const Color.fromARGB(115, 233, 233, 233),
             child: Form(
               key: _signinFormKey,
               child: Center(
@@ -90,13 +92,17 @@ class _LoginPageState extends State<LoginPage> {
                       text: 'Giriş Yap',
                       onTap: () {
                         if (_signinFormKey.currentState!.validate()) {
+                          print('button: ${_userNameController.text}');
+                          print('button: ${_passwordController.text}');
+
                           context.read<AuthBloc>().add(
                                 AuthLoginRequested(
                                   userLoginParams: UserLoginParams(
                                     userName: _userNameController.text.trim(),
                                     password: _passwordController.text.trim(),
                                   ),
-                                ),);
+                                ),
+                              );
                         }
                       },
                       color: GlobalVariables.secondaryColor,
@@ -114,22 +120,25 @@ class _LoginPageState extends State<LoginPage> {
   _determineHomePage(UserModel user) {
     switch (user.operationClaim) {
       case 1:
-        _navigateToPage(DoughListPage.routeName,null);
+        _navigateToPage(DoughListPage.routeName, null);
       case 2:
-       _navigateToPage(ProductionPage.routeName, user);
+        _navigateToPage(ProductionPage.routeName, user);
       case 3:
-       _navigateToPage(ProductionPage.routeName,user);
+        _navigateToPage(ProductionPage.routeName, user);
       case 4:
-       _navigateToPage(ServiceListPage.routeName,null);
+        _navigateToPage(ServiceListPage.routeName, null);
+      case 5:
+        _navigateToPage(SellAssistancePage.routeName, null);
       default:
-       _navigateToPage(LoginPage.routeName,null);
-  
+        _navigateToPage(LoginPage.routeName, null);
     }
   }
 
   _navigateToPage(String routeName, UserModel? args) {
-    args == null ?
-    Navigator.pushNamedAndRemoveUntil(context, routeName, (route) => false) :
-     Navigator.pushNamedAndRemoveUntil(context, routeName,arguments: args, (route) => false);
+    args == null
+        ? Navigator.pushNamedAndRemoveUntil(
+            context, routeName, (route) => false)
+        : Navigator.pushNamedAndRemoveUntil(
+            context, routeName, arguments: args, (route) => false);
   }
 }

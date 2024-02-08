@@ -13,7 +13,7 @@ class _AuthApiService implements AuthApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;
@@ -50,6 +50,7 @@ class _AuthApiService implements AuthApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
+    print('result: ${_result.data}');
     final value = UserModel.fromJson(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;

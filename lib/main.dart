@@ -9,6 +9,7 @@ import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_markets/service_markets_bloc.dart';
@@ -124,8 +125,10 @@ class MyApp extends StatelessWidget {
         return ProductionPage(user: savedUser);
       case 4:
         return const ServiceListPage();
+      case 5:
+        return const SellAssistancePage();
       default:
-        // Handle any other cases or show a default page
+      
         return const LoginPage();
     }
   }

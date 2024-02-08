@@ -48,7 +48,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
   _buildBody() {
     return BlocBuilder<ServiceListsBloc, ServiceListsState>(
         builder: (context, state) {
-      print("state: ${state.serviceLists}");
+    
       if (state is ServiceListsLoading) {
         return const LoadingIndicator();
       }

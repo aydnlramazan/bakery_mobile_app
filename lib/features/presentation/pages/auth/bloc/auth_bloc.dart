@@ -23,7 +23,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void onUserLogin(AuthLoginRequested event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    final dataState = await _authUseCase(params: event.userLoginParams);
+        print('event data:${event.userLoginParams}');
+    final dataState = await _authUseCase.userLogin(params: event.userLoginParams);
+    print('data state : ${dataState.data}');
+
     if (dataState is DataSuccess && dataState.data != null) {
       emit(AuthSuccess(user: UserModel.fromEntity(dataState.data!)));
     }
@@ -35,13 +38,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     await UserPreferences.clearUser();
-    var user =await UserPreferences.getUser();
+    var user = await UserPreferences.getUser();
     if (user == null) {
       emit(const AuthSuccess());
-      Navigator.pushNamedAndRemoveUntil(event.context, LoginPage.routeName, (route) => false);
-    }else{
+      Navigator.pushNamedAndRemoveUntil(
+          event.context, LoginPage.routeName, (route) => false);
+    } else {
       emit(const AuthFailure());
     }
-   
   }
 }
