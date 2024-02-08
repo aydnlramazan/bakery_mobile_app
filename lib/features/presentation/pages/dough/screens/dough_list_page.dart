@@ -9,6 +9,7 @@ import 'package:bakery_app/features/presentation/widgets/error_animation.dart';
 import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/utils/is_today_check.dart';
 import '../../../widgets/empty_content.dart';
 import '../bloc/dough_lists/dough_factory_bloc.dart';
 
@@ -153,12 +154,7 @@ class _DoughListPageState extends State<DoughListPage> {
     }
   }
 
-  bool isToday(DateTime selectedDate) {
-    DateTime currentDate = DateTime.now();
-    return currentDate.year == selectedDate.year &&
-        currentDate.month == selectedDate.month &&
-        currentDate.day == selectedDate.day;
-  }
+  
 
   bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&

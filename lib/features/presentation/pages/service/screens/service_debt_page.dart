@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
+import '../../../../../core/utils/is_today_check.dart';
 import '../../../../../core/utils/toast_message.dart';
 import '../../../widgets/custom_confirmation_dialog.dart';
 import '../../../widgets/custom_payment_dialog.dart';
@@ -104,7 +105,7 @@ class ServiceDebtPage extends StatelessWidget {
         builder: (BuildContext context) {
           return BlocBuilder<ServiceDebtDetailBloc, ServiceDebtDetailState>(
               builder: ((context, state) {
-            print('State: ${state.serviceDebtDetailList}');
+        
             return switch (state) {
               ServiceDebtDetailLoading() => const LoadingIndicator(),
               ServiceDebtDetailFailure() => const ErrorAnimation(),
@@ -220,12 +221,6 @@ class ServiceDebtPage extends StatelessWidget {
         });
   }
 
-  bool isToday(DateTime selectedDate) {
-    DateTime currentDate = DateTime.now();
-    return currentDate.year == selectedDate.year &&
-        currentDate.month == selectedDate.month &&
-        currentDate.day == selectedDate.day;
-  }
 
   void _deletePaidDebt(BuildContext context,
       ServiceDebtDetailModel serviceDebtDetailModel, String marketName) {

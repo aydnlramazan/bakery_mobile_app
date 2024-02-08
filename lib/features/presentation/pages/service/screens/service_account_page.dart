@@ -116,7 +116,7 @@ class ServiceAccountPage extends StatelessWidget {
                   ('Toplam Adet: ${accountLeftModel.givenBread - accountLeftModel.staleBread}'),
               secondText: 'Toplam Tutar: ${accountLeftModel.totalAmount}',
               controller: controller,
-              onSave: (paidAmount) async {
+              onSave: (paidAmount)  {
                 if (paidAmount > accountLeftModel.totalAmount) {
                   showToastMessage("Tutardan fazla sayı girilmez!");
                   return;

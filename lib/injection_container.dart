@@ -3,6 +3,7 @@
 import 'package:bakery_app/core/constants/constants.dart';
 import 'package:bakery_app/features/data/data_sources/remote/auth_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/dough_service.dart';
+import 'package:bakery_app/features/data/data_sources/remote/expense_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/product_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/service_account_service.dart';
 import 'package:bakery_app/features/data/data_sources/remote/service_debt_service.dart';
@@ -13,14 +14,17 @@ import 'package:bakery_app/features/data/repositories/product_repository_impl.da
 import 'package:bakery_app/features/data/repositories/service_account_repository_impl.dart';
 import 'package:bakery_app/features/domain/repositories/auth_repository.dart';
 import 'package:bakery_app/features/domain/repositories/dough_repository.dart';
+import 'package:bakery_app/features/domain/repositories/expense_repository.dart';
 import 'package:bakery_app/features/domain/repositories/product_repository.dart';
 import 'package:bakery_app/features/domain/repositories/service_account_repository.dart';
 import 'package:bakery_app/features/domain/repositories/service_market_repository.dart';
 import 'package:bakery_app/features/domain/usecases/dough_factory_usecases.dart';
+import 'package:bakery_app/features/domain/usecases/expense_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/product_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/service_account_usecases.dart';
 import 'package:bakery_app/features/domain/usecases/service_market_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/user_login_usecase.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/expense_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
@@ -32,6 +36,7 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
 import 'features/data/data_sources/remote/service_stale_service.dart';
+import 'features/data/repositories/expense_repository_impl.dart';
 import 'features/data/repositories/service_debt_repository_impl.dart';
 import 'features/data/repositories/service_market_repository_impl.dart';
 import 'features/data/repositories/service_stale_repository_impl.dart';
@@ -72,6 +77,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ServiceStaleRepository>(ServiceStaleRepositoryImpl(sl()));
   sl.registerSingleton<ServiceDebtApiService>(ServiceDebtApiService(sl()));
   sl.registerSingleton<ServiceDebtRepository>(ServiceDebtRepositoryImpl(sl()));
+  sl.registerSingleton<ExpenseService>(ExpenseService(sl()));
+  sl.registerSingleton<ExpenseRepository>(ExpenseRepositoryImpl(sl()));
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
@@ -81,6 +88,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ServiceAccountUseCase>(ServiceAccountUseCase(sl()));
   sl.registerSingleton<ServiceStaleUseCase>(ServiceStaleUseCase(sl()));
   sl.registerSingleton<ServiceDebtUseCase>(ServiceDebtUseCase(sl()));
+    sl.registerSingleton<ExpenseUseCase>(ExpenseUseCase(sl()));
 
 
   // Blocs
@@ -100,4 +108,5 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ServiceStaleReceivedBloc>(() => ServiceStaleReceivedBloc(sl()));
   sl.registerFactory<ServiceDebtBloc>(() => ServiceDebtBloc(sl()));
   sl.registerFactory<ServiceDebtDetailBloc>(() => ServiceDebtDetailBloc(sl()));
+  sl.registerFactory<ExpenseBloc>(() => ExpenseBloc(sl()));
 }

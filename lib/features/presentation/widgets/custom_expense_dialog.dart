@@ -1,18 +1,17 @@
+import 'package:bakery_app/core/utils/toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomPaymentDialog extends StatelessWidget {
+class CustomExpenseDialog extends StatelessWidget {
   final String title;
-  final String? firstText;
-  final String? secondText;
-  final TextEditingController controller;
-  final Function(double) onSave;
-  const CustomPaymentDialog(
+  final TextEditingController expenseNameController;
+  final TextEditingController expenseAmountController;
+  final Function(double, String) onSave;
+  const CustomExpenseDialog(
       {super.key,
       required this.title,
-      this.firstText,
-      this.secondText,
-      required this.controller,
+      required this.expenseAmountController,
+      required this.expenseNameController,
       required this.onSave});
 
   @override
@@ -23,10 +22,13 @@ class CustomPaymentDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (firstText != null) Text(firstText!),
-          if (secondText != null) Text(secondText!),
           TextField(
-            controller: controller,
+            controller: expenseNameController,
+            keyboardType: TextInputType.text,
+            decoration: const InputDecoration(labelText: 'Başlık'),
+          ),
+          TextField(
+            controller: expenseAmountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))
@@ -42,9 +44,14 @@ class CustomPaymentDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            double newQuantity = double.tryParse(controller.text) ?? 0.0;
-            onSave(newQuantity);
-            Navigator.of(context).pop();
+            double amount =
+                double.tryParse(expenseAmountController.text) ?? 0.0;
+            if (amount != 0 && expenseNameController.text.isNotEmpty) {
+              onSave(amount, expenseNameController.text);
+              Navigator.of(context).pop();
+            } else {
+              showToastMessage('İlgili alanlar boş geçilmez');
+            }
           },
           child: const Text('Kaydet'),
         ),

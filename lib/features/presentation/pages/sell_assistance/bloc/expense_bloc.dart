@@ -1,4 +1,5 @@
 import 'package:bakery_app/core/resources/data_state.dart';
+import 'package:bakery_app/core/utils/toast_message.dart';
 import 'package:bakery_app/features/data/models/expense.dart';
 import 'package:bakery_app/features/domain/usecases/expense_usecase.dart';
 import 'package:bloc/bloc.dart';
@@ -37,8 +38,10 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     emit(const ExpenseLoading());
 
     final dataState = await _expenseUseCase.addExpense(event.expense);
+
     if (dataState is DataSuccess) {
       emit(ExpenseSuccess(expenseList: [...?state.expenseList, event.expense]));
+      showToastMessage('Gider başarıyla eklendi');
     }
 
     if (dataState is DataFailed) {
@@ -46,32 +49,40 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     }
   }
 
-  void onUpdateExpense( ExpenseUpdateRequested event, Emitter<ExpenseState> emit) async {
+  void onUpdateExpense(
+      ExpenseUpdateRequested event, Emitter<ExpenseState> emit) async {
     final state = this.state;
     emit(const ExpenseLoading());
     final dataState = await _expenseUseCase.updateExpense(event.expense);
 
     if (dataState is DataSuccess) {
-      emit(ExpenseSuccess(expenseList: [...state.expenseList!.map((element)=> element.id == event.expense.id?event.expense:element)]));
+      emit(ExpenseSuccess(expenseList: [
+        ...state.expenseList!.map((element) =>
+            element.id == event.expense.id ? event.expense : element)
+      ]));
+      showToastMessage('Gider başarıyla güncellendi');
     }
 
     if (dataState is DataFailed) {
-        emit(ExpenseFailure(error: dataState.error!));
+      emit(ExpenseFailure(error: dataState.error!));
     }
   }
 
-  void onDeleteExpense(ExpenseDeleteRequested event, Emitter<ExpenseState> emit) async {
+  void onDeleteExpense(
+      ExpenseDeleteRequested event, Emitter<ExpenseState> emit) async {
     final state = this.state;
     emit(const ExpenseLoading());
 
     final dataState = await _expenseUseCase.deleteExpense(event.expense.id);
 
     if (dataState is DataSuccess) {
-      emit(ExpenseSuccess(expenseList: [...?state.expenseList]..remove(event.expense)));
+      emit(ExpenseSuccess(
+          expenseList: [...?state.expenseList]..remove(event.expense)));
+          showToastMessage('Gider başarıyla silindi');
     }
 
     if (dataState is DataFailed) {
-        emit(ExpenseFailure(error: dataState.error!));
+      emit(ExpenseFailure(error: dataState.error!));
     }
   }
 }

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
+import '../../../../../core/utils/is_today_check.dart';
 import '../../../../data/data_sources/local/shared_preference.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../bloc/service_lists/service_lists_bloc.dart';
@@ -143,12 +144,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
     }
   }
 
-  bool isToday(DateTime selectedDate) {
-    DateTime currentDate = DateTime.now();
-    return currentDate.year == selectedDate.year &&
-        currentDate.month == selectedDate.month &&
-        currentDate.day == selectedDate.day;
-  }
+
 
   bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&

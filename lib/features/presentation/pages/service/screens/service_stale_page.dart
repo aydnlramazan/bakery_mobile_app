@@ -55,9 +55,7 @@ class ServiceStalePage extends StatelessWidget {
 
   _getNotReceivedStaleMarkets(BuildContext context) {
     List<TextEditingController> controllers = List.empty(growable: true);
-    context
-        .read<ServiceStaleLeftBloc>()
-        .add(ServiceGetStaleLeftRequested(date: today));
+    context.read<ServiceStaleLeftBloc>().add(ServiceGetStaleLeftRequested(date: today));
 
     return BlocBuilder<ServiceStaleLeftBloc, ServiceStaleLeftState>(
         builder: ((context, state) {

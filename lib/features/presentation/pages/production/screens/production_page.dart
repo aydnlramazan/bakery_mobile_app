@@ -7,6 +7,7 @@ import 'package:bakery_app/features/presentation/widgets/custom_app_bar_with_dat
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/utils/is_today_check.dart';
 import '../../../../../core/utils/toast_message.dart';
 import '../../../../data/models/product.dart';
 import '../../../../data/models/product_added.dart';
@@ -345,12 +346,7 @@ class _ProductionPageState extends State<ProductionPage> {
     }
   }
 
-  bool isToday(DateTime selectedDate) {
-    DateTime currentDate = DateTime.now();
-    return currentDate.year == selectedDate.year &&
-        currentDate.month == selectedDate.month &&
-        currentDate.day == selectedDate.day;
-  }
+
 
   bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&
