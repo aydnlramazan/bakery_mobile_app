@@ -27,6 +27,7 @@ import 'package:bakery_app/features/domain/usecases/service_account_usecases.dar
 import 'package:bakery_app/features/domain/usecases/service_market_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/user_login_usecase.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/service_stale_product/service_stale_product_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
@@ -37,16 +38,20 @@ import 'package:bakery_app/features/presentation/pages/service/bloc/service_stal
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
+import 'features/data/data_sources/remote/service_stale_product_service.dart';
 import 'features/data/data_sources/remote/service_stale_service.dart';
 import 'features/data/repositories/expense_repository_impl.dart';
 import 'features/data/repositories/given_product_to_service_repository_impl.dart';
 import 'features/data/repositories/service_debt_repository_impl.dart';
 import 'features/data/repositories/service_market_repository_impl.dart';
+import 'features/data/repositories/service_stale_product_repository_impl.dart';
 import 'features/data/repositories/service_stale_repository_impl.dart';
 import 'features/domain/repositories/given_product_to_service_repository.dart';
 import 'features/domain/repositories/service_debt_repository.dart';
+import 'features/domain/repositories/service_stale_product_repository.dart';
 import 'features/domain/repositories/service_stale_repository.dart';
 import 'features/domain/usecases/service_debt_usecase.dart';
+import 'features/domain/usecases/service_stale_product_usecase.dart';
 import 'features/domain/usecases/service_stale_usecase.dart';
 import 'features/presentation/pages/auth/bloc/auth_bloc.dart';
 import 'features/presentation/pages/dough/bloc/dough_added_products/dough_added_products_bloc.dart';
@@ -86,6 +91,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ExpenseRepository>(ExpenseRepositoryImpl(sl()));
   sl.registerSingleton<GivenProductToService>(GivenProductToService(sl()));
   sl.registerSingleton<GivenProductToServiceRepository>(GivenProductToServiceRepositoryImpl(sl()));
+  sl.registerSingleton<ServiceStaleProduct>(ServiceStaleProduct(sl()));
+  sl.registerSingleton<ServiceStaleProductRepository>(ServiceStaleProductRepositoryImpl(sl()));
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
@@ -97,6 +104,8 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<ServiceDebtUseCase>(ServiceDebtUseCase(sl()));
   sl.registerSingleton<ExpenseUseCase>(ExpenseUseCase(sl()));
   sl.registerSingleton<GivenProductToServiceUseCase>(GivenProductToServiceUseCase(sl()));
+  sl.registerSingleton<ServiceStaleProductUseCase>(ServiceStaleProductUseCase(sl()));
+
 
 
 
@@ -118,6 +127,8 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<ServiceDebtDetailBloc>(() => ServiceDebtDetailBloc(sl()));
   sl.registerFactory<ExpenseBloc>(() => ExpenseBloc(sl()));
   sl.registerFactory<GivenProductToServiceBloc>(() => GivenProductToServiceBloc(sl()));
+  sl.registerFactory<ServiceStaleProductBloc>(() => ServiceStaleProductBloc(sl()));
+
 
 
 }

@@ -1,24 +1,26 @@
 import 'dart:io';
 
 import 'package:bakery_app/core/resources/data_state.dart';
-import 'package:bakery_app/features/data/data_sources/remote/given_product_to_service_service.dart';
-import 'package:bakery_app/features/data/models/given_product_to_service.dart';
-import 'package:bakery_app/features/domain/entities/given_product_to_service.dart';
-import 'package:bakery_app/features/domain/repositories/given_product_to_service_repository.dart';
+import 'package:bakery_app/features/data/models/service_stale_product.dart';
+
+import 'package:bakery_app/features/domain/entities/service_stale_product.dart';
 import 'package:dio/dio.dart';
 
-class GivenProductToServiceRepositoryImpl
-    extends GivenProductToServiceRepository {
-  final GivenProductToService _givenProductToService;
-  GivenProductToServiceRepositoryImpl(this._givenProductToService);
+
+import '../../domain/repositories/service_stale_product_repository.dart';
+import '../data_sources/remote/service_stale_product_service.dart';
+
+class ServiceStaleProductRepositoryImpl extends ServiceStaleProductRepository {
+  final ServiceStaleProduct _serviceStaleProduct;
+  ServiceStaleProductRepositoryImpl(this._serviceStaleProduct);
   @override
-  Future<DataState<void>> addGivenProductToService(
-      GivenProductToServiceEntity givenProductToService) async {
-    try {
+  Future<DataState<void>> addServiceStaleProduct(
+      ServiceStaleProductEntity serviceStaleProduct) async{
+try {
       final httpResponse =
-          await _givenProductToService.addGivenProductToService(
-              givenProductToService:
-                  GivenProductToServiceModel.fromEntity(givenProductToService));
+          await _serviceStaleProduct.addServiceStaleProduct(
+              serviceStaleProduct:
+                  ServiceStaleProductModel.fromEntity(serviceStaleProduct));
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -35,11 +37,11 @@ class GivenProductToServiceRepositoryImpl
   }
 
   @override
-  Future<DataState<void>> deleteGivenProductToService(int id) async {
-    try {
+  Future<DataState<void>> deleteServiceStaleProduct(int id) async{
+   try {
       
       final httpResponse =
-          await _givenProductToService.deleteGivenProductToService(id: id);
+          await _serviceStaleProduct.deleteServiceStaleProduct(id: id);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -56,13 +58,13 @@ class GivenProductToServiceRepositoryImpl
   }
 
   @override
-  Future<DataState<List<GivenProductToServiceEntity>>>
-      getGivenProductToServiceListByDateAndServiceType(
-          DateTime date, int servisTypeId) async {
-    try {
-      final httpResponse = await _givenProductToService
-          .getGivenProductToServiceListByDateAndServiceType(
-              date: date, servisTypeId: servisTypeId);
+  Future<DataState<List<ServiceStaleProductEntity>>>
+      getServiceStaleProductListByDateAndServiceType(
+          DateTime date, int serviceTypeId) async{
+       try {
+      final httpResponse = await _serviceStaleProduct
+          .getServiceStaleProductListByDateAndServiceType(
+              date: date, servisTypeId: serviceTypeId);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
@@ -79,13 +81,13 @@ class GivenProductToServiceRepositoryImpl
   }
 
   @override
-  Future<DataState<void>> updateGivenProductToService(
-      GivenProductToServiceEntity givenProductToService) async {
-    try {
+  Future<DataState<void>> updateServiceStaleProduct(
+      ServiceStaleProductEntity serviceStaleProduct) async{
+  try {
       final httpResponse =
-          await _givenProductToService.updateGivenProductToService(
-              givenProductToService:
-                  GivenProductToServiceModel.fromEntity(givenProductToService));
+          await _serviceStaleProduct.updateServiceStaleProduct(
+              serviceStaleProduct:
+                  ServiceStaleProductModel.fromEntity(serviceStaleProduct));
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {

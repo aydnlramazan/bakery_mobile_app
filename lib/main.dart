@@ -10,6 +10,7 @@ import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.d
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/service_stale_product/service_stale_product_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_added_markets/service_added_markets_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_lists/service_lists_bloc.dart';
@@ -101,6 +102,9 @@ class MyApp extends StatelessWidget {
         ),
          BlocProvider<GivenProductToServiceBloc>(
           create: (context) => GivenProductToServiceBloc(sl()),
+        ),
+           BlocProvider<ServiceStaleProductBloc>(
+          create: (context) => ServiceStaleProductBloc(sl()),
         ),
       ],
       child: MaterialApp(

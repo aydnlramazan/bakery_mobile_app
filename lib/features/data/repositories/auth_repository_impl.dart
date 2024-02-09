@@ -19,8 +19,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<DataState<UserEntity>> userLogin(
       UserLoginParams? userLoginParams) async {
     try {
-        print('Name: ${userLoginParams!.userName}');
-        print('Password: ${userLoginParams.password}');
+
 
       final httpResponse = await _authApiService.loginUser(
           userName: userLoginParams!.userName,

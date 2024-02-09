@@ -1,14 +1,17 @@
-import 'package:bakery_app/features/data/models/expense.dart';
-import 'package:bakery_app/features/data/models/given_product_to_service.dart';
-import 'package:bakery_app/features/data/models/user.dart';
-import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
-
-import 'package:bakery_app/features/presentation/widgets/custom_expense_dialog.dart';
-import 'package:bakery_app/features/presentation/widgets/custom_receive_amount_dialog.dart';
-import 'package:bakery_app/features/presentation/widgets/custom_sell_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:bakery_app/features/data/models/expense.dart';
+import 'package:bakery_app/features/data/models/given_product_to_service.dart';
+import 'package:bakery_app/features/data/models/service_stale_product.dart';
+import 'package:bakery_app/features/data/models/user.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/service_stale_product/service_stale_product_bloc.dart';
+import 'package:bakery_app/features/presentation/widgets/custom_expense_dialog.dart';
+import 'package:bakery_app/features/presentation/widgets/custom_receive_amount_dialog.dart';
+import 'package:bakery_app/features/presentation/widgets/custom_sell_list_tile.dart';
+
+import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
 import '../../../../../core/utils/is_today_check.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
@@ -49,6 +52,17 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           _stale(),
           _counting(),
         ],
+      ),
+    );
+  }
+
+ _buildAppbar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(70),
+      child: CustomAppBarWithDate(
+        title: "Tezgah",
+        date: date,
+        onTap: _selectDate,
       ),
     );
   }
@@ -187,8 +201,8 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Alınan Bayat',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null)
+              onShowDetails: _showServiceStaleProductList,
+              onAdd: todayDate ? _addServiceStaleProduct : null)
         ],
       ),
     );
@@ -205,17 +219,6 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
             title: 'Gider',
             onShowDetails: _showExpenseList,
             onAdd: todayDate ? _addExpense : null));
-  }
-
-  _buildAppbar() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(70),
-      child: CustomAppBarWithDate(
-        title: "Tezgah",
-        date: date,
-        onTap: _selectDate,
-      ),
-    );
   }
 
   Future<void> _selectDate() async {
@@ -266,7 +269,6 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
   }
 
   _showGivenProductToServiceList(int serviceType) {
-    print('1 service type: $serviceType');
     context.read<GivenProductToServiceBloc>().add(
         GivenProductToServiceGetListRequested(
             date: selectedDate!, servisTypeId: serviceType));
@@ -288,7 +290,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                           padding: EdgeInsets.all(8),
                           child: Center(
                             child: Text(
-                              "Giderler Listesi",
+                              "Ekmek Teslimat Listesi",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -307,9 +309,9 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       .givenProductToServiceList![index]
                                       .quantity
                                       .toString()),
-                                  subtitle: Text(state
-                                      .givenProductToServiceList![index].date
-                                      .toString()),
+                                  subtitle: Text(getFormattedDateTime(state
+                                      .givenProductToServiceList![index].date) 
+                                      ),
                                   trailing: todayDate &&
                                           widget.user.id ==
                                               state
@@ -352,7 +354,53 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  void _showExpenseList() {
+  _updateGivenProductToService(
+      GivenProductToServiceModel givenProductToServiceModel) {
+    TextEditingController controller = TextEditingController(
+        text: givenProductToServiceModel.quantity.toString());
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title: 'Ekmek Teslimati Güncelleme',
+              controller: controller,
+              onSave: (amount) {
+                if (amount == givenProductToServiceModel.quantity) {
+                  return;
+                }
+                context.read<GivenProductToServiceBloc>().add(
+                    GivenProductToServiceUpdateRequested(
+                        givenProductToService: GivenProductToServiceModel(
+                            id: givenProductToServiceModel.id,
+                            userId: givenProductToServiceModel.userId,
+                            quantity: amount,
+                            date: givenProductToServiceModel.date,
+                            serviceProductId:
+                                givenProductToServiceModel.serviceProductId,
+                            serviceTypeId:
+                                givenProductToServiceModel.serviceTypeId)));
+              });
+        });
+  }
+
+  _deleteGivenProductToService(
+      GivenProductToServiceModel givenProductToServiceModel) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content: 'Ekmek teslimati silmek için emin misiniz?',
+              onTap: () {
+                context.read<GivenProductToServiceBloc>().add(
+                    GivenProductToServiceDeleteRequested(
+                        givenProductToService: givenProductToServiceModel));
+              });
+        });
+  }
+
+  _showExpenseList() {
     context
         .read<ExpenseBloc>()
         .add(ExpenseGetListRequested(date: selectedDate!));
@@ -389,10 +437,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       ? GlobalVariables.oddItemColor
                                       : GlobalVariables.evenItemColor,
                                   title: Text(state.expenseList![index].detail),
-                                  subtitle: Text(state
-                                      .expenseList![index].amount
-                                      .toString()),
-                                  trailing: todayDate
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(state.expenseList![index].amount.toString()),
+                                      Text(getFormattedDateTime(state.expenseList![index].date)),
+                                    ],
+                                  ),
+                                  trailing: todayDate && widget.user.id == state.expenseList![index].userId
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -427,7 +479,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  void _deleteExpense(ExpenseModel expense) {
+  _deleteExpense(ExpenseModel expense) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -442,12 +494,11 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  void _updateExpense(ExpenseModel expense) {
+  _updateExpense(ExpenseModel expense) {
     TextEditingController expenseAmountController =
         TextEditingController(text: expense.amount.toString());
     TextEditingController expenseNameController =
         TextEditingController(text: expense.detail);
-
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -464,12 +515,13 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                         id: expense.id,
                         detail: name,
                         date: DateTime.now(),
-                        amount: amount)));
+                        amount: amount,
+                        userId: expense.userId)));
               });
         });
   }
 
-  void _addExpense() {
+  _addExpense() {
     TextEditingController expenseAmountController = TextEditingController();
     TextEditingController expenseNameController = TextEditingController();
 
@@ -486,15 +538,104 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                         id: 0,
                         detail: name,
                         date: DateTime.now(),
-                        amount: amount)));
+                        amount: amount,
+                        userId: widget.user.id!
+                        )));
               });
         });
   }
 
-  void _updateGivenProductToService(
-      GivenProductToServiceModel givenProductToServiceModel) {
-    TextEditingController controller = TextEditingController(
-        text: givenProductToServiceModel.quantity.toString());
+  _showServiceStaleProductList(){
+     context.read<ServiceStaleProductBloc>().add(ServiceStaleProductGetListRequested(date: selectedDate!,serviceTypeId: 1));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<ServiceStaleProductBloc, ServiceStaleProductState>(
+              builder: ((context, state) {
+            return switch (state) {
+              ServiceStaleProductLoading() => const LoadingIndicator(),
+              ServiceStaleProductFailure() => const ErrorAnimation(),
+              ServiceStaleProductSuccess() => state.serviceStaleProductList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Alınan Bayat Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.serviceStaleProductList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state.serviceStaleProductList![index].quantity.toString()),
+                                  subtitle: Text(getFormattedDateTime(state
+                                      .serviceStaleProductList![index].date)
+                                      ),
+                                  trailing: todayDate && widget.user.id == state.serviceStaleProductList![index].userId
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _updateServiceStaleProduct(state
+                                                        .serviceStaleProductList![index]);
+                                                  },
+                                                  icon: const Icon(Icons.edit),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _deleteServiceStaleProduct(state
+                                                        .serviceStaleProductList![index]);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.delete),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                            ])
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _deleteServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct){
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content: 'Alınan bayatı silmek için emin misiniz?',
+              onTap: () {
+                context.read<ServiceStaleProductBloc>().add(
+                    ServiceStaleProductDeleteRequested(
+                        serviceStaleProduct: serviceStaleProduct));
+              });
+        });
+  }
+
+  _updateServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct){
+     TextEditingController controller = TextEditingController(
+        text: serviceStaleProduct.quantity.toString());
 
     showDialog(
         context: context,
@@ -503,37 +644,47 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               title: 'Ekmek Teslimati Güncelleme',
               controller: controller,
               onSave: (amount) {
-                if (amount == givenProductToServiceModel.quantity) {
+                if (amount == serviceStaleProduct.quantity) {
                   return;
                 }
-                context.read<GivenProductToServiceBloc>().add(
-                    GivenProductToServiceUpdateRequested(
-                        givenProductToService: GivenProductToServiceModel(
-                            id: givenProductToServiceModel.id,
-                            userId: givenProductToServiceModel.userId,
+                context.read<ServiceStaleProductBloc>().add(
+                    ServiceStaleProductUpdateRequested(
+                        serviceStaleProduct: ServiceStaleProductModel(
+                            id: serviceStaleProduct.id,
+                            userId: serviceStaleProduct.userId,
                             quantity: amount,
-                            date: givenProductToServiceModel.date,
+                            date: serviceStaleProduct.date,
                             serviceProductId:
-                                givenProductToServiceModel.serviceProductId,
+                                serviceStaleProduct.serviceProductId,
                             serviceTypeId:
-                                givenProductToServiceModel.serviceTypeId)));
+                                serviceStaleProduct.serviceTypeId)));
               });
         });
   }
 
-  void _deleteGivenProductToService(
-      GivenProductToServiceModel givenProductToServiceModel) {
+  _addServiceStaleProduct(){
+  TextEditingController controller = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return CustomConfirmationDialog(
-              title: 'Silme',
-              content: 'Ekmek teslimati silmek için emin misiniz?',
-              onTap: () {
-                context.read<GivenProductToServiceBloc>().add(
-                    GivenProductToServiceDeleteRequested(
-                        givenProductToService: givenProductToServiceModel));
+          return CustomReceiveAmountDialog(
+              title: 'Teslim Alınan Bayat',
+              controller: controller,
+              onSave: (amount) {
+                
+                context.read<ServiceStaleProductBloc>().add(
+                    ServiceStaleProductPostRequested(
+                        serviceStaleProduct: ServiceStaleProductModel(
+                            id: 0,
+                            userId: widget.user.id!,
+                            quantity: amount,
+                            date: DateTime.now(),
+                            serviceProductId: 1,
+                            serviceTypeId: 1),),);
               });
         });
+
   }
+
+
 }
