@@ -53,6 +53,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
           builder: (_) => DoughProductPage(
                 listId: args[0],
                 canEdit: args[1],
+                date: args[2],
               ));
     default:
       return MaterialPageRoute(

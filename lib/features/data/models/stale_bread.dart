@@ -15,7 +15,7 @@ class StaleBreadModel extends StaleBreadEntity {
   factory StaleBreadModel.fromJson(Map<String, dynamic> map) {
     return StaleBreadModel(
       id: map["id"] ?? 0,
-      breadEquivalent: map["breadEquivalent"] ?? 0.0,
+      breadEquivalent: (map["breadEquivalent"] ?? 0).toDouble(),
       name: map["name"] ?? "",
     );
   }

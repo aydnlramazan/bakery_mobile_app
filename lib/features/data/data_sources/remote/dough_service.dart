@@ -21,7 +21,9 @@ abstract class DoughApiService {
   @POST("/api/DoughFactory/AddDoughFactoryListAndListDetail")
   Future<HttpResponse> addDoughProducts(
       {@Query("userId") int userId,
-      @Body() List<DoughProductToAddModel> doughListProduct});
+      @Body() List<DoughProductToAddModel> doughListProduct,
+      @Query("date") DateTime date,
+      });
 
   @GET("/api/DoughFactory/GetAddedDoughFactoryListDetailByListId")
   Future<HttpResponse<List<DoughAddedProductModel>>> getAddedProductsByListId(

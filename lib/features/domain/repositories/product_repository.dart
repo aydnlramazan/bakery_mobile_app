@@ -6,7 +6,7 @@ import 'package:bakery_app/features/domain/entities/product_to_add.dart';
 abstract class ProductRepository {
   Future<DataState<List<AddedProductEntity>>>getAddedProductsByDateAndCategoryId(DateTime date, int categoryId);
   Future<DataState<List<ProductEntity>>> getAvailableProductsByCategoryId(DateTime date, int categoryId);
-  Future<DataState<String>> addProducts(int userId, int categoryId, List<ProductToAddEntity> productList);
+  Future<DataState<String>> addProducts(int userId, int categoryId, List<ProductToAddEntity> productList, DateTime date);
   Future<DataState<void>> deleteProductById(int id);
   Future<DataState<void>> updateProduct(ProductToAddEntity product);
 }

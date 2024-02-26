@@ -46,8 +46,7 @@ class GivenProductToServiceBloc
     final state = this.state;
     emit(const GivenProductToServiceLoading());
 
-    final dataState = await _givenProductToServiceUseCase
-        .addGivenProductToService(event.givenProductToService);
+    final dataState = await _givenProductToServiceUseCase.addGivenProductToService(event.givenProductToService);
 
     if (dataState is DataSuccess) {
       emit(GivenProductToServiceSuccess(givenProductToServiceList: [

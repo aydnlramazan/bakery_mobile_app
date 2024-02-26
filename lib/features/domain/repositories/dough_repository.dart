@@ -11,7 +11,7 @@ abstract class DoughRepository {
   Future<DataState<List<DoughProductEntity>>> getAvailableDoughProducts(
       int listId); // if list id is 0 then it will retrieve all dough product else retrieve products that are not exist in this list
   Future<DataState<int>> addDoughProducts(
-      int userId, List<DoughProductToAddEntity> doughListProduct);
+      int userId, List<DoughProductToAddEntity> doughListProduct,DateTime date);
   Future<DataState<void>> deleteDoughProductById(int id);
   Future<DataState<void>> updateDoughProduct(
       DoughProductToAddEntity doughProduct);

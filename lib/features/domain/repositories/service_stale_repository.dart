@@ -5,7 +5,7 @@ import '../../../core/resources/data_state.dart';
 import '../entities/service_stale.dart';
 
 abstract class ServiceStaleRepository{
-    Future<DataState<List<ServiceReceivedStaleEntity>>>getServiceReceivedStaleByDate(DateTime date);
+  Future<DataState<List<ServiceReceivedStaleEntity>>>getServiceReceivedStaleByDate(DateTime date);
   Future<DataState<List<ServiceStaleEntity>>> getServiceNotReceivedStaleByDate(DateTime date);
   Future<DataState<void>> addServiceReceivedStale(ServiceToReceiveStaleEntity serviceToReceiveStale);
   Future<DataState<void>> deleteServiceReceivedStale(int id);

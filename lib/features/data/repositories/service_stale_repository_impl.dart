@@ -64,10 +64,7 @@ class ServiceStaleRepositoryImpl extends ServiceStaleRepository {
   Future<DataState<List<ServiceStaleEntity>>> getServiceNotReceivedStaleByDate(
       DateTime date) async {
     try {
-      print("date: $date");
-      final httpResponse = await _serviceStaleService
-          .getServiceNotReceivedStaleByDate(date: date);
-      print("impl http response: $httpResponse");
+      final httpResponse = await _serviceStaleService.getServiceNotReceivedStaleByDate(date: date);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {

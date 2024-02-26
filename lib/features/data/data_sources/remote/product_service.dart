@@ -28,7 +28,8 @@ abstract class ProductApiService {
   Future<HttpResponse> addProducts(
       {@Query("userId") int userId,
       @Query("categoryId") int categoryId,
-      @Body() List<ProductToAddModel> doughListProduct});
+      @Body() List<ProductToAddModel> doughListProduct,
+      @Query("date") DateTime date});
 
 
   @DELETE("/api/ProductionList/DeleteProductionListDetail")

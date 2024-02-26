@@ -240,7 +240,7 @@ class _ProductionPageState extends State<ProductionPage> {
   _saveNewProducts() async {
     if (listToPost.isNotEmpty) {
       context.read<AddedProductBloc>().add(PostAddedProductRequested(
-          products: listToPost, userId: user.id!, categoryId: categoryId));
+          products: listToPost, userId: user.id!, categoryId: categoryId, date: selectedDate!));
     } else {
       showToastMessage("Yeni ürün eklemelisiniz!");
     }
@@ -336,7 +336,7 @@ class _ProductionPageState extends State<ProductionPage> {
         if (todayDate) {
           date = 'Bugün';
           context.read<AddedProductBloc>().add(GetAddedProductsRequested(
-              date: selectedDate!, categoryId: user.operationClaim!));
+              date: selectedDate!, categoryId: categoryId));
           context.read<ProductBloc>().add(GetProductsRequested(
               date: selectedDate!, categoryId: user.operationClaim!));
         } else {
@@ -365,6 +365,10 @@ class _ProductionPageState extends State<ProductionPage> {
         {
           pageTitle = 'Hamur işi';
           categoryId = 2;
+        }
+        case 5:{
+          pageTitle = 'Dışardan Alınan Ürünler';
+          categoryId = 3;
         }
     }
   }

@@ -84,7 +84,8 @@ class _DoughListPageState extends State<DoughListPage> {
                           Navigator.pushNamed(
                               context, DoughProductPage.routeName, arguments: {
                             0: state.doughLists![index].id,
-                            1: result
+                            1: result,
+                            2:selectedDate
                           });
                         },
                       ),
@@ -96,12 +97,14 @@ class _DoughListPageState extends State<DoughListPage> {
   }
 
   _buildFloatingButton() {
+    // TODO if the user is admin should make changes
     if (todayDate) {
       return FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, DoughProductPage.routeName, arguments: {
             0: 0,
-            1: true
+            1: true,
+            2:selectedDate
           }).then((value) => setState(
                 () {
                   context
@@ -163,6 +166,7 @@ class _DoughListPageState extends State<DoughListPage> {
   }
 
   Future<bool> canEdit(int userId) async {
+    //TODO if the user is admin should do the process any time
     var user = await UserPreferences.getUser();
     return user!.id == userId && isToday(selectedDate!);
   }

@@ -28,6 +28,8 @@ class AddedProductBloc extends Bloc<AddedProductsEvent, AddedProductState> {
   void onGetProducts(
       GetAddedProductsRequested event, Emitter<AddedProductState> emit) async {
     emit(const AddedProductLoading());
+    print('Date: ${event.date}');
+    print('Category Id:${event.categoryId}');
     final dataState = await _productUseCase.getAddedProductsByDateAndCategoryId(
         event.date, event.categoryId);
 
@@ -43,11 +45,10 @@ class AddedProductBloc extends Bloc<AddedProductsEvent, AddedProductState> {
 
   void onPostProductsToServer(
       PostAddedProductRequested event, Emitter<AddedProductState> emit) async {
-    print("userID: ${event.userId}");
-    print("products: ${event.products}");
+  
     emit(const AddedProductLoading());
     final dataState = await _productUseCase.addProducts(
-        event.userId, event.categoryId, event.products);
+        event.userId, event.categoryId, event.products,event.date);
     if (dataState is DataSuccess && dataState.data != null) {
       final updatedDataState =
           await _productUseCase.getAddedProductsByDateAndCategoryId(
@@ -132,7 +133,12 @@ class AddedProductBloc extends Bloc<AddedProductsEvent, AddedProductState> {
                   quantity: event.product.quantity));
 
           if (dataState is DataSuccess) {
-            emit(AddedProductSuccess(addedProducts: [...state.addedProducts!.map((element) => element.productId == event.product.productId ? event.product : element)]));
+            emit(AddedProductSuccess(addedProducts: [
+              ...state.addedProducts!.map((element) =>
+                  element.productId == event.product.productId
+                      ? event.product
+                      : element)
+            ]));
           }
           if (dataState is DataFailed) {
             emit(AddedProductFailure(error: dataState.error!));

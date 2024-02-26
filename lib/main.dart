@@ -28,6 +28,11 @@ import 'features/presentation/pages/dough/bloc/dough_products/dough_products_blo
 import 'features/presentation/pages/production/bloc/added_products/added_product_bloc.dart';
 import 'features/presentation/pages/production/bloc/products/product_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/expense/expense_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/received_money_from_service/received_money_from_service_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/stale_bread/stale_bread_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/stale_bread_products/stale_bread_products_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/stale_product/stale_product_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/stale_product_products/stale_product_products_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_account_received/service_account_received_bloc.dart';
 import 'features/presentation/pages/service/bloc/service_debt/service_debt_bloc.dart';
@@ -105,6 +110,21 @@ class MyApp extends StatelessWidget {
         ),
            BlocProvider<ServiceStaleProductBloc>(
           create: (context) => ServiceStaleProductBloc(sl()),
+        ),
+           BlocProvider<StaleBreadBloc>(
+          create: (context) => StaleBreadBloc(sl()),
+        ),
+         BlocProvider<StaleBreadProductsBloc>(
+          create: (context) => StaleBreadProductsBloc(sl()),
+        ),
+             BlocProvider<StaleProductProductsBloc>(
+          create: (context) => StaleProductProductsBloc(sl()),
+        ),
+             BlocProvider<StaleProductBloc>(
+          create: (context) => StaleProductBloc(sl()),
+        ),
+             BlocProvider<ReceivedMoneyFromServiceBloc>(
+          create: (context) => ReceivedMoneyFromServiceBloc(sl()),
         ),
       ],
       child: MaterialApp(

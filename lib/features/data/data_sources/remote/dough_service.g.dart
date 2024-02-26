@@ -55,9 +55,10 @@ class _DoughApiService implements DoughApiService {
   Future<HttpResponse<dynamic>> addDoughProducts({
      int? userId,
      List<DoughProductToAddModel>? doughListProduct,
+     DateTime? date,
   }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'userId': userId};
+    final queryParameters = <String, dynamic>{r'userId': userId,r'date':date};
     final _headers = <String, dynamic>{};
     final _data = doughListProduct!.map((e) => e.toJson()).toList();
     final _result =

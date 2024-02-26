@@ -26,8 +26,8 @@ class DoughUseCase {
   }
 
   Future<DataState<int>> addDoughProducts(
-      int userId, List<DoughProductToAddEntity> doughListProduct) async {
-    return await _doughRepository.addDoughProducts(userId, doughListProduct);
+      int userId, List<DoughProductToAddEntity> doughListProduct,DateTime date) async {
+    return await _doughRepository.addDoughProducts(userId, doughListProduct,date);
   }
 
   Future<DataState<void>> deleteDoughProductById(int id) async {

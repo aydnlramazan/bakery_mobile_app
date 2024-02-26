@@ -16,12 +16,12 @@ class ProductRepositoryImpl extends ProductRepository {
   ProductRepositoryImpl(this._apiService);
   @override
   Future<DataState<String>> addProducts(
-      int userId, int categoryId, List<ProductToAddEntity> productList) async {
+      int userId, int categoryId, List<ProductToAddEntity> productList,DateTime date) async {
     try {
       final List<ProductToAddModel> productModel =
           productList.map((e) => ProductToAddModel.fromEntity(e)).toList();
       final httpResponse =
-          await _apiService.addProducts(userId: userId,categoryId: categoryId,doughListProduct: productModel);
+          await _apiService.addProducts(userId: userId,categoryId: categoryId,doughListProduct: productModel,date: date);
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {

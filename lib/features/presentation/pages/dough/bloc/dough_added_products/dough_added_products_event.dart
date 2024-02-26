@@ -20,12 +20,14 @@ final class DoughRemoveAddedProductRequested extends DoughAddedProductsEvent {
 final class DoughUpdateAddedProductRequested extends DoughAddedProductsEvent {
   final DoughAddedProductModel product;
   final int index;
-  DoughUpdateAddedProductRequested({required this.product, required this.index});
+  DoughUpdateAddedProductRequested(
+      {required this.product, required this.index});
 }
 
 final class DoughPostAddedProductRequested extends DoughAddedProductsEvent {
   final List<DoughProductToAddModel> products;
   final int userId;
-  DoughPostAddedProductRequested({required this.products, required this.userId});
+  final DateTime date;
+  DoughPostAddedProductRequested(
+      {required this.products, required this.userId, required this.date});
 }
-

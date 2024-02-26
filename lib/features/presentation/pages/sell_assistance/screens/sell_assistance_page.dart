@@ -1,3 +1,7 @@
+import 'package:bakery_app/features/data/models/stale_bread.dart';
+import 'package:bakery_app/features/data/models/stale_bread_added.dart';
+import 'package:bakery_app/features/data/models/stale_product_added.dart';
+import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,12 +18,17 @@ import 'package:bakery_app/features/presentation/widgets/custom_sell_list_tile.d
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
 import '../../../../../core/utils/is_today_check.dart';
+import '../../../../data/models/stale_product.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../../../widgets/custom_confirmation_dialog.dart';
 import '../../../widgets/empty_content.dart';
 import '../../../widgets/error_animation.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../bloc/expense/expense_bloc.dart';
+import '../bloc/stale_bread/stale_bread_bloc.dart';
+import '../bloc/stale_bread_products/stale_bread_products_bloc.dart';
+import '../bloc/stale_product/stale_product_bloc.dart';
+import '../bloc/stale_product_products/stale_product_products_bloc.dart';
 
 class SellAssistancePage extends StatefulWidget {
   static const String routeName = "sell-assistance-page";
@@ -56,13 +65,25 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
     );
   }
 
- _buildAppbar() {
+  _buildAppbar() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(70),
       child: CustomAppBarWithDate(
         title: "Tezgah",
         date: date,
         onTap: _selectDate,
+        additionalMenuItems: const [
+          PopupMenuItem<String>(
+            value: 'purchesed-products',
+            child: Text('Dışardan alınan ürünler'),
+          ),
+        ],
+        onMenuItemSelected: (value) {
+          if (value == 'purchesed-products') {
+            Navigator.pushNamed(context, ProductionPage.routeName,
+                arguments: widget.user);
+          }
+        },
       ),
     );
   }
@@ -114,6 +135,18 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           CustomSellListTile(
               title: 'Dışardan Alınan',
               onShowDetails: _showExpenseList,
+              onAdd: todayDate ? _addExpense : null),
+              // -------NEED TO BE DONE--------
+          CustomSellListTile(
+              title: 'Kasa',
+              onShowDetails: _showExpenseList,
+              onAdd: todayDate ? _addExpense : null)
+              
+              ,
+              // -------NEED TO BE DONE--------
+          CustomSellListTile(
+              title: 'Kredi Kart',
+              onShowDetails: _showExpenseList,
               onAdd: todayDate ? _addExpense : null)
         ],
       ),
@@ -136,8 +169,8 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         children: [
           CustomSellListTile(
               title: 'Ekmek',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails: _showStaleBreadList,
+              onAdd: todayDate ? _showStaleBreadProductList : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -146,8 +179,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Pasta',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails: () {
+                _showStaleAddedProductList(1);
+              },
+              onAdd: todayDate
+                  ? () {
+                      _showStaleProductList(1);
+                    }
+                  : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -156,8 +195,12 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Börek',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null)
+              onShowDetails: () {
+                _showStaleAddedProductList(2);
+              },
+              onAdd: todayDate ?  () {
+                      _showStaleProductList(2);
+                    } : null)
         ],
       ),
     );
@@ -201,6 +244,17 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Alınan Bayat',
+              onShowDetails: _showServiceStaleProductList,
+              onAdd: todayDate ? _addServiceStaleProduct : null),
+          const Divider(
+            height: 1,
+            color: Colors.white,
+            indent: 10,
+            endIndent: 10,
+          ),
+          // -------NEED TO BE DONE--------
+          CustomSellListTile(
+              title: 'Alınan Para',
               onShowDetails: _showServiceStaleProductList,
               onAdd: todayDate ? _addServiceStaleProduct : null)
         ],
@@ -310,8 +364,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       .quantity
                                       .toString()),
                                   subtitle: Text(getFormattedDateTime(state
-                                      .givenProductToServiceList![index].date) 
-                                      ),
+                                      .givenProductToServiceList![index].date)),
                                   trailing: todayDate &&
                                           widget.user.id ==
                                               state
@@ -438,13 +491,18 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       : GlobalVariables.evenItemColor,
                                   title: Text(state.expenseList![index].detail),
                                   subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(state.expenseList![index].amount.toString()),
-                                      Text(getFormattedDateTime(state.expenseList![index].date)),
+                                      Text(state.expenseList![index].amount
+                                          .toString()),
+                                      Text(getFormattedDateTime(
+                                          state.expenseList![index].date)),
                                     ],
                                   ),
-                                  trailing: todayDate && widget.user.id == state.expenseList![index].userId
+                                  trailing: todayDate &&
+                                          widget.user.id ==
+                                              state.expenseList![index].userId
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -539,14 +597,15 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                         detail: name,
                         date: DateTime.now(),
                         amount: amount,
-                        userId: widget.user.id!
-                        )));
+                        userId: widget.user.id!)));
               });
         });
   }
 
-  _showServiceStaleProductList(){
-     context.read<ServiceStaleProductBloc>().add(ServiceStaleProductGetListRequested(date: selectedDate!,serviceTypeId: 1));
+  _showServiceStaleProductList() {
+    context.read<ServiceStaleProductBloc>().add(
+        ServiceStaleProductGetListRequested(
+            date: selectedDate!, serviceTypeId: 1));
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -555,7 +614,8 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
             return switch (state) {
               ServiceStaleProductLoading() => const LoadingIndicator(),
               ServiceStaleProductFailure() => const ErrorAnimation(),
-              ServiceStaleProductSuccess() => state.serviceStaleProductList!.isEmpty
+              ServiceStaleProductSuccess() => state
+                      .serviceStaleProductList!.isEmpty
                   ? const EmptyContent()
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -579,26 +639,34 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                   tileColor: index.isOdd
                                       ? GlobalVariables.oddItemColor
                                       : GlobalVariables.evenItemColor,
-                                  title: Text(state.serviceStaleProductList![index].quantity.toString()),
+                                  title: Text(state
+                                      .serviceStaleProductList![index].quantity
+                                      .toString()),
                                   subtitle: Text(getFormattedDateTime(state
-                                      .serviceStaleProductList![index].date)
-                                      ),
-                                  trailing: todayDate && widget.user.id == state.serviceStaleProductList![index].userId
+                                      .serviceStaleProductList![index].date)),
+                                  trailing: todayDate &&
+                                          widget.user.id ==
+                                              state
+                                                  .serviceStaleProductList![
+                                                      index]
+                                                  .userId
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                               IconButton(
                                                   onPressed: () {
-                                                    _updateServiceStaleProduct(state
-                                                        .serviceStaleProductList![index]);
+                                                    _updateServiceStaleProduct(
+                                                        state.serviceStaleProductList![
+                                                            index]);
                                                   },
                                                   icon: const Icon(Icons.edit),
                                                   color: GlobalVariables
                                                       .secondaryColor),
                                               IconButton(
                                                   onPressed: () {
-                                                    _deleteServiceStaleProduct(state
-                                                        .serviceStaleProductList![index]);
+                                                    _deleteServiceStaleProduct(
+                                                        state.serviceStaleProductList![
+                                                            index]);
                                                   },
                                                   icon:
                                                       const Icon(Icons.delete),
@@ -618,8 +686,8 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  _deleteServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct){
-      showDialog(
+  _deleteServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct) {
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomConfirmationDialog(
@@ -633,9 +701,9 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  _updateServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct){
-     TextEditingController controller = TextEditingController(
-        text: serviceStaleProduct.quantity.toString());
+  _updateServiceStaleProduct(ServiceStaleProductModel serviceStaleProduct) {
+    TextEditingController controller =
+        TextEditingController(text: serviceStaleProduct.quantity.toString());
 
     showDialog(
         context: context,
@@ -656,14 +724,13 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                             date: serviceStaleProduct.date,
                             serviceProductId:
                                 serviceStaleProduct.serviceProductId,
-                            serviceTypeId:
-                                serviceStaleProduct.serviceTypeId)));
+                            serviceTypeId: serviceStaleProduct.serviceTypeId)));
               });
         });
   }
 
-  _addServiceStaleProduct(){
-  TextEditingController controller = TextEditingController();
+  _addServiceStaleProduct() {
+    TextEditingController controller = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -671,20 +738,431 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               title: 'Teslim Alınan Bayat',
               controller: controller,
               onSave: (amount) {
-                
                 context.read<ServiceStaleProductBloc>().add(
-                    ServiceStaleProductPostRequested(
+                      ServiceStaleProductPostRequested(
                         serviceStaleProduct: ServiceStaleProductModel(
                             id: 0,
                             userId: widget.user.id!,
                             quantity: amount,
                             date: DateTime.now(),
                             serviceProductId: 1,
-                            serviceTypeId: 1),),);
+                            serviceTypeId: 1),
+                      ),
+                    );
               });
         });
-
   }
 
+  _showStaleBreadList() {
+    context
+        .read<StaleBreadBloc>()
+        .add(GetStaleBreadRequested(date: selectedDate!));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<StaleBreadBloc, StaleBreadState>(
+              builder: ((context, state) {
+            return switch (state) {
+              StaleBreadLoading() => const LoadingIndicator(),
+              StaleBreadFailure() => const ErrorAnimation(),
+              StaleBreadSuccess() => state.staleBreadList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Bayat Ekmek Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.staleBreadList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state.staleBreadList![index]
+                                      .doughFactoryProductName),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(state.staleBreadList![index].quantity
+                                          .toString()),
+                                      Text(getFormattedDateTime(
+                                          state.staleBreadList![index].date)),
+                                    ],
+                                  ),
+                                  trailing: todayDate
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _updateStaleBreadAdded(
+                                                        state.staleBreadList![
+                                                            index]);
+                                                  },
+                                                  icon: const Icon(Icons.edit),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _deleteStaleBreadAdded(
+                                                        state.staleBreadList![
+                                                            index]);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.delete),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                            ])
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
 
+  _deleteStaleBreadAdded(StaleBreadAddedModel staleBreadAdded) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:
+                  '${staleBreadAdded.doughFactoryProductName} bayatı silmek için emin misiniz?',
+              onTap: () {
+                context.read<StaleBreadBloc>().add(RemoveStaleBreadRequested(
+                    staleBreadAddedModel: staleBreadAdded));
+              });
+        });
+  }
+
+  _updateStaleBreadAdded(StaleBreadAddedModel staleBreadAdded) {
+    TextEditingController controller =
+        TextEditingController(text: staleBreadAdded.quantity.toString());
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title:
+                  '${staleBreadAdded.doughFactoryProductName} Bayatı Güncelleme',
+              controller: controller,
+              onSave: (amount) {
+                if (amount == staleBreadAdded.quantity) {
+                  return;
+                }
+                context.read<StaleBreadBloc>().add(UpdateStaleBreadRequested(
+                        staleBreadAddedModel: StaleBreadAddedModel(
+                      id: staleBreadAdded.id,
+                      doughFactoryProductId:
+                          staleBreadAdded.doughFactoryProductId,
+                      quantity: amount,
+                      date: staleBreadAdded.date,
+                      doughFactoryProductName:
+                          staleBreadAdded.doughFactoryProductName,
+                    )));
+              });
+        });
+  }
+
+  _showStaleBreadProductList() {
+    context
+        .read<StaleBreadProductsBloc>()
+        .add(GetStaleBreadProductsRequested(date: selectedDate!));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<StaleBreadProductsBloc, StaleBreadProductsState>(
+              builder: ((context, state) {
+            return switch (state) {
+              StaleBreadProductsLoading() => const LoadingIndicator(),
+              StaleBreadProductsFailure() => const ErrorAnimation(),
+              StaleBreadProductsSuccess() => state
+                      .staleBreadProductsList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Ekmek Ürünleri Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.staleBreadProductsList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state
+                                      .staleBreadProductsList![index].name),
+                                  trailing: todayDate
+                                      ? IconButton(
+                                          onPressed: () {
+                                            _addStaleBreadProduct(
+                                                state.staleBreadProductsList![
+                                                    index]);
+                                          },
+                                          icon: const Icon(Icons.add),
+                                          color: GlobalVariables.secondaryColor)
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _addStaleBreadProduct(StaleBreadModel staleBread) {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title: 'Bayat ${staleBread.name}',
+              controller: controller,
+              onSave: (amount) {
+                context.read<StaleBreadProductsBloc>().add(
+                      PostStaleBreadProductsRequested(
+                          staleBreadModel: staleBread, staleQuantity: amount),
+                    );
+              });
+        });
+  }
+
+  _showStaleAddedProductList(int categoryId) {
+    context
+        .read<StaleProductBloc>()
+        .add(GetStaleAddedProductRequested(date: selectedDate!,categoryId: categoryId));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<StaleProductBloc, StaleProductState>(
+              builder: ((context, state) {
+            return switch (state) {
+              StaleAddedProductLoading() => const LoadingIndicator(),
+              StaleAddedProductFailure() => const ErrorAnimation(),
+              StaleAddedProductSuccess() => state.staleAddedProductList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Bayat Ürünler Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.staleAddedProductList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state.staleAddedProductList![index]
+                                      .productName),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(state.staleAddedProductList![index].quantity
+                                          .toString()),
+                                      Text(getFormattedDateTime(
+                                          state.staleAddedProductList![index].date)),
+                                    ],
+                                  ),
+                                  trailing: todayDate
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _updateStaleProductAdded(
+                                                        state.staleAddedProductList![
+                                                            index]);
+                                                  },
+                                                  icon: const Icon(Icons.edit),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _deleteStaleProductAdded(
+                                                        state.staleAddedProductList![
+                                                            index]);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.delete),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                            ])
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _deleteStaleProductAdded(StaleProductAddedModel staleProductAdded) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:
+                  '${staleProductAdded.productName} bayatı silmek için emin misiniz?',
+              onTap: () {
+                context.read<StaleProductBloc>().add(RemoveStaleAddedProductRequested(
+                    staleProductAddedModel: staleProductAdded));
+              });
+        });
+  }
+
+  _updateStaleProductAdded(StaleProductAddedModel staleProductAdded) {
+    TextEditingController controller =TextEditingController(text: staleProductAdded.quantity.toString());
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title:
+                  '${staleProductAdded.productName} Bayatı Güncelleme',
+              controller: controller,
+              onSave: (amount) {
+                if (amount == staleProductAdded.quantity) {
+                  return;
+                }
+                context.read<StaleProductBloc>().add(UpdateStaleAddedProductRequested(
+                        staleProductAddedModel: StaleProductAddedModel(
+                      id: staleProductAdded.id,
+                      productName:
+                          staleProductAdded.productName,
+                      quantity: amount,
+                      date: staleProductAdded.date,
+                      productId:
+                          staleProductAdded.id,
+                    )));
+              });
+        });
+  }
+
+  _showStaleProductList(int categoryId) {
+    context
+        .read<StaleProductProductsBloc>()
+        .add(GetStaleProductsRequested(date: selectedDate!,categoryId: categoryId));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<StaleProductProductsBloc, StaleProductProductsState>(
+              builder: ((context, state) {
+            return switch (state) {
+              StaleProductsLoading() => const LoadingIndicator(),
+              StaleProductsFailure() => const ErrorAnimation(),
+              StaleProductsSuccess() => state
+                      .staleProductsList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Ürünler Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.staleProductsList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state
+                                      .staleProductsList![index].name),
+                                  trailing: todayDate
+                                      ? IconButton(
+                                          onPressed: () {
+                                            _addStaleProduct(
+                                                state.staleProductsList![
+                                                    index]);
+                                          },
+                                          icon: const Icon(Icons.add),
+                                          color: GlobalVariables.secondaryColor)
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _addStaleProduct(StaleProductModel staleBread) {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title: 'Bayat ${staleBread.name}',
+              controller: controller,
+              onSave: (amount) {
+                context.read<StaleProductProductsBloc>().add(
+                      PostStaleProductsRequested(
+                          staleBreadModel: staleBread, staleQuantity: amount),
+                    );
+              });
+        });
+  }
 }

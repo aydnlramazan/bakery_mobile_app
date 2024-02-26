@@ -28,5 +28,7 @@ final class PostAddedProductRequested extends AddedProductsEvent {
   final List<ProductToAddModel> products;
   final int userId;
   final int categoryId;
-  PostAddedProductRequested({required this.products, required this.userId, required this.categoryId});
+  final DateTime date;
+  PostAddedProductRequested(
+      {required this.products, required this.userId, required this.categoryId, required this.date});
 }

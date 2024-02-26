@@ -121,7 +121,7 @@ class DoughRepositoryImpl extends DoughRepository {
 
   @override
   Future<DataState<int>> addDoughProducts(
-      int userId, List<DoughProductToAddEntity> doughListProduct) async {
+      int userId, List<DoughProductToAddEntity> doughListProduct,DateTime date) async {
     try {
       final List<DoughProductToAddModel> doughListProductModels =
           doughListProduct
@@ -130,7 +130,8 @@ class DoughRepositoryImpl extends DoughRepository {
 
       final httpResponse = await _doughApiService.addDoughProducts(
           doughListProduct: doughListProductModels,
-          userId: userId
+          userId: userId,
+date: date
           );
       if (httpResponse.response.statusCode! >= 200 && httpResponse.response.statusCode! <= 300  ) {
         return DataSuccess(httpResponse.data);

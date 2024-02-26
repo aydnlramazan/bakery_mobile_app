@@ -47,14 +47,12 @@ class DoughAddedProductsBloc
     print("products: ${event.products}");
     emit(const DoughAddedProductsLoading());
     final dataState =
-        await _doughUseCase.addDoughProducts(event.userId, event.products);
+        await _doughUseCase.addDoughProducts(event.userId, event.products,event.date);
     if (dataState is DataSuccess && dataState.data != null) {
       final updatedDataState = await _doughUseCase
           .getDoughListProductsByListId(dataState.data as int);
       if (updatedDataState is DataSuccess && updatedDataState.data != null) {
-        emit(DoughAddedProductsSuccess(
-            doughAddedProducts:
-                updatedDataState.data as List<DoughAddedProductModel>, listId: dataState.data as int));
+        emit(DoughAddedProductsSuccess(doughAddedProducts:updatedDataState.data as List<DoughAddedProductModel>, listId: dataState.data as int));
         event.products.clear();
       }
 

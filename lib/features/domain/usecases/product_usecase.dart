@@ -21,9 +21,9 @@ class ProductUseCase {
   }
 
   Future<DataState<String>> addProducts(
-      int userId, int categoryId, List<ProductToAddEntity> productList) async {
+      int userId, int categoryId, List<ProductToAddEntity> productList, DateTime date) async {
     return await _productRepository.addProducts(
-        userId, categoryId, productList);
+        userId, categoryId, productList,date);
   }
 
   Future<DataState<void>> deleteProductById(int id) async {

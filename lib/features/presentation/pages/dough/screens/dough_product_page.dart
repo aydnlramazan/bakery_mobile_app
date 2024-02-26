@@ -21,9 +21,10 @@ import '../bloc/dough_products/dough_products_bloc.dart';
 
 class DoughProductPage extends StatelessWidget {
   static const String routeName = "dough-products-page";
-  int listId;
+   int listId;
   final bool canEdit;
-  DoughProductPage({super.key, required this.listId, required this.canEdit});
+  final DateTime date;
+  DoughProductPage({super.key, required this.listId, required this.canEdit, required this.date});
 
   final List<DoughProductToAddModel> listToPost = List.empty(growable: true);
 
@@ -236,7 +237,7 @@ class DoughProductPage extends StatelessWidget {
       if (user != null) {
         context.read<DoughAddedProductsBloc>().add(
             DoughPostAddedProductRequested(
-                products: listToPost, userId: user.id!));
+                products: listToPost, userId: user.id!,date: date));
       }
     } else {
       showToastMessage("Yeni ürün eklemelisiniz!");

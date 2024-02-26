@@ -99,11 +99,13 @@ class _ProductApiService implements ProductApiService {
     int? userId,
      int? categoryId,
      List<ProductToAddModel>? doughListProduct,
+      DateTime? date
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'userId': userId,
       r'categoryId': categoryId,
+       r'date': date,
     };
     final _headers = <String, dynamic>{};
     final _data = doughListProduct!.map((e) => e.toJson()).toList();
