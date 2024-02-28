@@ -29,6 +29,8 @@ import 'features/presentation/pages/dough/bloc/dough_products/dough_products_blo
 import 'features/presentation/pages/production/bloc/added_products/added_product_bloc.dart';
 import 'features/presentation/pages/production/bloc/products/product_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/expense/expense_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/product_counting_added/product_counting_added_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/product_counting_not_added/product_counting_not_added_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/received_money_from_service/received_money_from_service_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/stale_bread/stale_bread_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/stale_bread_products/stale_bread_products_bloc.dart';
@@ -130,6 +132,12 @@ class MyApp extends StatelessWidget {
           BlocProvider<BreadCountingBloc>(
           create: (context) => BreadCountingBloc(sl()),
         ),
+           BlocProvider<ProductCountingAddedBloc>(
+          create: (context) => ProductCountingAddedBloc(sl()),
+        ),
+           BlocProvider<ProductCountingNotAddedBloc>(
+          create: (context) => ProductCountingNotAddedBloc(sl()),
+        ),
       ],
       child: MaterialApp(
         localizationsDelegates: const [
@@ -164,7 +172,6 @@ class MyApp extends StatelessWidget {
       case 5:
         return  SellAssistancePage(user:savedUser);
       default:
-      
         return const LoginPage();
     }
   }

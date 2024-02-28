@@ -1,9 +1,11 @@
+import 'package:bakery_app/features/data/models/product_counting_added.dart';
 import 'package:bakery_app/features/data/models/received_money_from_service.dart';
 import 'package:bakery_app/features/data/models/stale_bread.dart';
 import 'package:bakery_app/features/data/models/stale_bread_added.dart';
 import 'package:bakery_app/features/data/models/stale_product_added.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/bread_counting/bread_counting_bloc.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/product_counting_added/product_counting_added_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,6 +32,7 @@ import '../../../widgets/empty_content.dart';
 import '../../../widgets/error_animation.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../bloc/expense/expense_bloc.dart';
+import '../bloc/product_counting_not_added/product_counting_not_added_bloc.dart';
 import '../bloc/received_money_from_service/received_money_from_service_bloc.dart';
 import '../bloc/stale_bread/stale_bread_bloc.dart';
 import '../bloc/stale_bread_products/stale_bread_products_bloc.dart';
@@ -126,8 +129,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Pasta',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails: () {
+                _showAddedProductCountingList(1);
+              },
+              onAdd: todayDate
+                  ? () {
+                      _showProductCountingNotAddedList(1);
+                    }
+                  : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -136,8 +145,12 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Börek',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails: () {
+                _showAddedProductCountingList(2);
+              },
+              onAdd: todayDate ? () {
+                      _showProductCountingNotAddedList(2);
+                    } : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -146,8 +159,12 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Dışardan Alınan',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails:  () {
+                _showAddedProductCountingList(3);
+              },
+              onAdd: todayDate ? () {
+                      _showProductCountingNotAddedList(3);
+                    } : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -1115,7 +1132,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                       productName: staleProductAdded.productName,
                       quantity: amount,
                       date: staleProductAdded.date,
-                      productId: staleProductAdded.id,
+                      productId: staleProductAdded.productId,
                     )));
               });
         });
@@ -1369,6 +1386,216 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                       })
             };
           }));
+        });
+  }
+
+  _showProductCountingNotAddedList(int categoryId) {
+    context.read<ProductCountingNotAddedBloc>().add(
+        GetProductCountingNotAddedRequested(
+            date: selectedDate!, categoryId: categoryId));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<ProductCountingNotAddedBloc,
+              ProductCountingNotAddedState>(builder: ((context, state) {
+            return switch (state) {
+              ProductCountingNotAddedLoading() => const LoadingIndicator(),
+              ProductCountingNotAddedFailure() => const ErrorAnimation(),
+              ProductCountingNotAddedSuccess() => state
+                      .productNotAddedList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Ürünler Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.productNotAddedList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(
+                                      state.productNotAddedList![index].name!),
+                                  trailing: todayDate
+                                      ? IconButton(
+                                          onPressed: () {
+                                            _addProductCounting(state
+                                                .productNotAddedList![index]);
+                                          },
+                                          icon: const Icon(Icons.add),
+                                          color: GlobalVariables.secondaryColor)
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _addProductCounting(ProductNotAddedModel product) {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title: '${product.name}',
+              controller: controller,
+              onSave: (quantity) {
+                context.read<ProductCountingNotAddedBloc>().add(
+                      PostProductCountingNotAddedRequested(
+                          productNotAdded: product, productQuantity: quantity),
+                    );
+              });
+        });
+  }
+
+  _showAddedProductCountingList(int categoryId) {
+    context.read<ProductCountingAddedBloc>().add(
+        GetProductCountingAddedRequested(
+            date: selectedDate!, categoryId: categoryId));
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<ProductCountingAddedBloc,
+              ProductCountingAddedState>(builder: ((context, state) {
+            return switch (state) {
+              ProductCountingAddedLoading() => const LoadingIndicator(),
+              ProductCountingAddedFailure() => const ErrorAnimation(),
+              ProductCountingAddedSuccess() => state
+                      .productCountingAddedList!.isEmpty
+                  ? const EmptyContent()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child: Text(
+                              "Ürünler Sayımı Listesi",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.productCountingAddedList!.length,
+                            itemBuilder: (context, index) {
+                              return Material(
+                                child: ListTile(
+                                  tileColor: index.isOdd
+                                      ? GlobalVariables.oddItemColor
+                                      : GlobalVariables.evenItemColor,
+                                  title: Text(state
+                                      .productCountingAddedList![index]
+                                      .productName),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(state
+                                          .productCountingAddedList![index]
+                                          .quantity
+                                          .toString()),
+                                          Text(getFormattedDateTime(state.productCountingAddedList![index].date)),
+                                    ],
+                                  ),
+                                  trailing: todayDate
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _updateProductCountingAdded(
+                                                        state.productCountingAddedList![
+                                                            index]);
+                                                  },
+                                                  icon: const Icon(Icons.edit),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _deleteProductCountingAdded(
+                                                        state.productCountingAddedList![
+                                                            index]);
+                                                  },
+                                                  icon:
+                                                      const Icon(Icons.delete),
+                                                  color: GlobalVariables
+                                                      .secondaryColor),
+                                            ])
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+            };
+          }));
+        });
+  }
+
+  _deleteProductCountingAdded(ProductCountingAddedModel productCountingAdded) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomConfirmationDialog(
+              title: 'Silme',
+              content:
+                  '${productCountingAdded.productName} ürün sayımı silmek için emin misiniz?',
+              onTap: () {
+                context.read<ProductCountingAddedBloc>().add(
+                    RemoveProductCountingAddedRequested(
+                        productCountingAddedModel: productCountingAdded));
+              });
+        });
+  }
+
+  _updateProductCountingAdded(ProductCountingAddedModel productCountingAdded) {
+    TextEditingController controller =
+        TextEditingController(text: productCountingAdded.quantity.toString());
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomReceiveAmountDialog(
+              title: '${productCountingAdded.productName} Bayatı Güncelleme',
+              controller: controller,
+              onSave: (amount) {
+                if (amount == productCountingAdded.quantity) {
+                  return;
+                }
+                context
+                    .read<ProductCountingAddedBloc>()
+                    .add(UpdateProductCountingAddedRequested(
+                        productCountingAddedModel: ProductCountingAddedModel(
+                          id: productCountingAdded.id,
+                          productName: productCountingAdded.productName,
+                          quantity: amount,
+                          productId: productCountingAdded.productId,
+                          date: productCountingAdded.date
+                        ),
+                       ));
+              });
         });
   }
 }

@@ -7,11 +7,13 @@ class ProductCountingAddedModel extends ProductCountingAddedEntity {
     required String productName,
     required int productId,
     required int quantity,
+    required DateTime date,
   }) : super(
           id: id,
           productName: productName,
           productId: productId,
           quantity: quantity,
+          date:date
         );
 
   factory ProductCountingAddedModel.fromJson(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class ProductCountingAddedModel extends ProductCountingAddedEntity {
       productName: map["productName"] ?? "",
       productId: map["productId"] ?? 0,
       quantity: map["quantity"] ?? 0,
+      date:  map["date"] != null ? DateTime.parse(map["date"]) : DateTime.now()
     );
   }
 
@@ -29,6 +32,7 @@ class ProductCountingAddedModel extends ProductCountingAddedEntity {
       'productName': productName,
       'productId': productId,
       'quantity': quantity,
+      'date':date.toIso8601String(),
     };
   }
 
@@ -38,6 +42,7 @@ class ProductCountingAddedModel extends ProductCountingAddedEntity {
       productName: entity.productName,
       productId: entity.productId,
       quantity: entity.quantity,
+      date: entity.date
     );
   }
 }

@@ -1,5 +1,5 @@
 part of 'stale_bread_products_bloc.dart';
-
+@immutable
 sealed class StaleBreadProductsState extends Equatable {
   const StaleBreadProductsState();
   

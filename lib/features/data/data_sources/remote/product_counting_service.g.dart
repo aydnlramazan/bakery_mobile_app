@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'stale_product_service.dart';
+part of 'product_counting_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,21 +8,19 @@ part of 'stale_product_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _StaleProductService implements StaleProductService {
-  _StaleProductService(
+class _ProductCountingService implements ProductCountingService {
+  _ProductCountingService(
     this._dio, 
     this.baseUrl,
-  ) {
-    baseUrl ??= 'https://192.168.1.3:7207';
-  }
+  );
 
   final Dio _dio;
 
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<StaleProductAddedModel>>>
-      getAddedStaleProductListByDate({
+  Future<HttpResponse<List<ProductCountingAddedModel>>>
+      getAddedProductsByDateAndCategoryId({
      DateTime? date,
      int? categoryId,
   }) async {
@@ -34,14 +32,14 @@ class _StaleProductService implements StaleProductService {
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<StaleProductAddedModel>>>(Options(
+        _setStreamType<HttpResponse<List<ProductCountingAddedModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/api/StaleProduct/GetByDateAndCategory',
+              '/api/ProductsCounting/GetProductsCountingByDateAndCategory',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -52,14 +50,15 @@ class _StaleProductService implements StaleProductService {
             ))));
     var value = _result.data!
         .map((dynamic i) =>
-            StaleProductAddedModel.fromJson(i as Map<String, dynamic>))
+            ProductCountingAddedModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<List<ProductNotAddedModel>>> getProductListByDate({
+  Future<HttpResponse<List<ProductNotAddedModel>>>
+      getNotAddedProductsByCategoryId({
      DateTime? date,
      int? categoryId,
   }) async {
@@ -78,7 +77,7 @@ class _StaleProductService implements StaleProductService {
     )
             .compose(
               _dio.options,
-              '/api/StaleProduct/GetProductsNotAddedToStale',
+              '/api/ProductsCounting/GetNotAddedProductsCountingByDate',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -96,13 +95,13 @@ class _StaleProductService implements StaleProductService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> addStaleProduct(
-      { StaleProductToAddModel? staleProductToAdd}) async {
+  Future<HttpResponse<dynamic>> addProducts(
+      { ProductCountingToAddModel? product}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(staleProductToAdd!.toJson());
+    _data.addAll(product!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'POST',
@@ -111,7 +110,7 @@ class _StaleProductService implements StaleProductService {
     )
             .compose(
               _dio.options,
-              '/api/StaleProduct/AddStaleProduct',
+              '/api/ProductsCounting/AddProductsCounting',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -126,7 +125,7 @@ class _StaleProductService implements StaleProductService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> deleteStaleProduct({ int? id}) async {
+  Future<HttpResponse<dynamic>> deleteProductById({ int? id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
@@ -139,7 +138,7 @@ class _StaleProductService implements StaleProductService {
     )
             .compose(
               _dio.options,
-              '/api/StaleProduct/DeleteStaleProduct',
+              '/api/ProductsCounting/DeleteProductsCountingById',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -154,13 +153,13 @@ class _StaleProductService implements StaleProductService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> updateStaleProduct(
-      { StaleProductToAddModel? staleProductToAdd}) async {
+  Future<HttpResponse<dynamic>> updateProduct(
+      { ProductCountingToAddModel? product}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(staleProductToAdd!.toJson());
+    _data.addAll(product!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'PUT',
@@ -169,7 +168,7 @@ class _StaleProductService implements StaleProductService {
     )
             .compose(
               _dio.options,
-              '/api/StaleProduct/UpdateStaleProduct',
+              '/api/ProductsCounting/UpdateProductsCounting',
               queryParameters: queryParameters,
               data: _data,
             )

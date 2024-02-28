@@ -16,7 +16,7 @@ class StaleProductBloc extends Bloc<StaleProductEvent, StaleProductState> {
   StaleProductBloc(this._staleProductUseCase) : super(const StaleAddedProductLoading()) {
     on<GetStaleAddedProductRequested>(onGetStaleAddedProduct);
     on<RemoveStaleAddedProductRequested>(onRemoveStaleAddedProduct);
-    on<UpdateStaleAddedProductRequested>(onUpdateStaleBread);
+    on<UpdateStaleAddedProductRequested>(onUpdateStaleProduct);
   }
 
   void onGetStaleAddedProduct(GetStaleAddedProductRequested event,
@@ -55,8 +55,7 @@ class StaleProductBloc extends Bloc<StaleProductEvent, StaleProductState> {
     }
   }
 
-   void onUpdateStaleBread(UpdateStaleAddedProductRequested event,
-      Emitter<StaleProductState> emit) async {
+   void onUpdateStaleProduct(UpdateStaleAddedProductRequested event,Emitter<StaleProductState> emit) async {
     final state = this.state;
     if (state is StaleAddedProductSuccess) {
       emit(const StaleAddedProductLoading());

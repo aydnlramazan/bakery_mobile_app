@@ -5,16 +5,18 @@ class ProductCountingAddedEntity extends Equatable {
   final String productName;
   final int productId;
   final int quantity;
+  final DateTime date;
 
   const ProductCountingAddedEntity({
     required this.id,
     required this.productName,
     required this.productId,
     required this.quantity,
+    required this.date
   });
 
   @override
   List<Object?> get props {
-    return [id, productName, productId, quantity];
+    return [id, productName, productId, quantity,date];
   }
 }
