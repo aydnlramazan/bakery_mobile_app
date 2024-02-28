@@ -7,7 +7,7 @@ part 'given_product_to_service_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class GivenProductToService {
-  factory GivenProductToService(Dio dio) = _GivenProductToService;
+  factory GivenProductToService(Dio dio, String baseUrl) = _GivenProductToService;
   @GET("/api/GivenProductsToService/GetGivenProductsToServiceByDateAndServisTypeId")
   Future<HttpResponse<List<GivenProductToServiceModel>>>getGivenProductToServiceListByDateAndServiceType({@Query("date") DateTime date, @Query("servisTypeId") int servisTypeId});
   @POST("/api/GivenProductsToService/AddGivenProductsToService")

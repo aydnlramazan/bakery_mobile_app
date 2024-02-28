@@ -1,13 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-class DoughProductEntity extends Equatable {
+class ProductNotAddedEntity extends Equatable {
   final int? id;
   final String? name;
 
-
-  const DoughProductEntity(
-      {this.id,
-      this.name});
+  const ProductNotAddedEntity({this.id, this.name});
 
   @override
   List<Object?> get props {

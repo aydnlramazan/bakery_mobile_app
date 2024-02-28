@@ -11,7 +11,7 @@ part 'product_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ProductApiService {
-  factory ProductApiService(Dio dio) = _ProductApiService;
+  factory ProductApiService(Dio dio, String baseUrl) = _ProductApiService;
 
   @GET("/api/ProductionList/GetAddedProductsByDateAndCategoryId")
   Future<HttpResponse<List<AddedProductModel>>> getAddedProductsByDateAndCategoryId(

@@ -1,7 +1,9 @@
+import 'package:bakery_app/features/data/models/received_money_from_service.dart';
 import 'package:bakery_app/features/data/models/stale_bread.dart';
 import 'package:bakery_app/features/data/models/stale_bread_added.dart';
 import 'package:bakery_app/features/data/models/stale_product_added.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/bread_counting/bread_counting_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,13 +20,17 @@ import 'package:bakery_app/features/presentation/widgets/custom_sell_list_tile.d
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
 import '../../../../../core/utils/is_today_check.dart';
-import '../../../../data/models/stale_product.dart';
+import '../../../../../core/utils/toast_message.dart';
+import '../../../../data/models/bread_counting.dart';
+import '../../../../data/models/product_not_added.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../../../widgets/custom_confirmation_dialog.dart';
+import '../../../widgets/custom_payment_dialog.dart';
 import '../../../widgets/empty_content.dart';
 import '../../../widgets/error_animation.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../bloc/expense/expense_bloc.dart';
+import '../bloc/received_money_from_service/received_money_from_service_bloc.dart';
 import '../bloc/stale_bread/stale_bread_bloc.dart';
 import '../bloc/stale_bread_products/stale_bread_products_bloc.dart';
 import '../bloc/stale_product/stale_product_bloc.dart';
@@ -104,8 +110,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         children: [
           CustomSellListTile(
               title: 'Ekmek',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
+              onShowDetails: () {
+                _updateBreadCounting(selectedDate!);
+              },
+              onAdd: todayDate
+                  ? () {
+                      _addBreadCountingDialog(selectedDate!);
+                    }
+                  : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -136,14 +148,24 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               title: 'Dışardan Alınan',
               onShowDetails: _showExpenseList,
               onAdd: todayDate ? _addExpense : null),
-              // -------NEED TO BE DONE--------
+          const Divider(
+            height: 1,
+            color: Colors.white,
+            indent: 10,
+            endIndent: 10,
+          ),
+          // -------NEED TO BE DONE--------
           CustomSellListTile(
               title: 'Kasa',
               onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null)
-              
-              ,
-              // -------NEED TO BE DONE--------
+              onAdd: todayDate ? _addExpense : null),
+          const Divider(
+            height: 1,
+            color: Colors.white,
+            indent: 10,
+            endIndent: 10,
+          ),
+          // -------NEED TO BE DONE--------
           CustomSellListTile(
               title: 'Kredi Kart',
               onShowDetails: _showExpenseList,
@@ -198,9 +220,11 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showStaleAddedProductList(2);
               },
-              onAdd: todayDate ?  () {
+              onAdd: todayDate
+                  ? () {
                       _showStaleProductList(2);
-                    } : null)
+                    }
+                  : null)
         ],
       ),
     );
@@ -252,11 +276,18 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
             indent: 10,
             endIndent: 10,
           ),
-          // -------NEED TO BE DONE--------
           CustomSellListTile(
               title: 'Alınan Para',
-              onShowDetails: _showServiceStaleProductList,
-              onAdd: todayDate ? _addServiceStaleProduct : null)
+              onShowDetails: () {
+                _updateReceivedPaymentFromService(1,
+                    "Servisten alınan parayı güncellemek için emin misiniz?");
+              },
+              onAdd: todayDate
+                  ? () {
+                      _addReceivedPaymentFromServiceDialog(
+                          1, "Servisten alınan para");
+                    }
+                  : null)
         ],
       ),
     );
@@ -961,9 +992,8 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
   }
 
   _showStaleAddedProductList(int categoryId) {
-    context
-        .read<StaleProductBloc>()
-        .add(GetStaleAddedProductRequested(date: selectedDate!,categoryId: categoryId));
+    context.read<StaleProductBloc>().add(GetStaleAddedProductRequested(
+        date: selectedDate!, categoryId: categoryId));
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -996,16 +1026,18 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                   tileColor: index.isOdd
                                       ? GlobalVariables.oddItemColor
                                       : GlobalVariables.evenItemColor,
-                                  title: Text(state.staleAddedProductList![index]
+                                  title: Text(state
+                                      .staleAddedProductList![index]
                                       .productName),
                                   subtitle: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(state.staleAddedProductList![index].quantity
+                                      Text(state.staleAddedProductList![index]
+                                          .quantity
                                           .toString()),
-                                      Text(getFormattedDateTime(
-                                          state.staleAddedProductList![index].date)),
+                                      Text(getFormattedDateTime(state
+                                          .staleAddedProductList![index].date)),
                                     ],
                                   ),
                                   trailing: todayDate
@@ -1054,54 +1086,53 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               content:
                   '${staleProductAdded.productName} bayatı silmek için emin misiniz?',
               onTap: () {
-                context.read<StaleProductBloc>().add(RemoveStaleAddedProductRequested(
-                    staleProductAddedModel: staleProductAdded));
+                context.read<StaleProductBloc>().add(
+                    RemoveStaleAddedProductRequested(
+                        staleProductAddedModel: staleProductAdded));
               });
         });
   }
 
   _updateStaleProductAdded(StaleProductAddedModel staleProductAdded) {
-    TextEditingController controller =TextEditingController(text: staleProductAdded.quantity.toString());
+    TextEditingController controller =
+        TextEditingController(text: staleProductAdded.quantity.toString());
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomReceiveAmountDialog(
-              title:
-                  '${staleProductAdded.productName} Bayatı Güncelleme',
+              title: '${staleProductAdded.productName} Bayatı Güncelleme',
               controller: controller,
               onSave: (amount) {
                 if (amount == staleProductAdded.quantity) {
                   return;
                 }
-                context.read<StaleProductBloc>().add(UpdateStaleAddedProductRequested(
+                context
+                    .read<StaleProductBloc>()
+                    .add(UpdateStaleAddedProductRequested(
                         staleProductAddedModel: StaleProductAddedModel(
                       id: staleProductAdded.id,
-                      productName:
-                          staleProductAdded.productName,
+                      productName: staleProductAdded.productName,
                       quantity: amount,
                       date: staleProductAdded.date,
-                      productId:
-                          staleProductAdded.id,
+                      productId: staleProductAdded.id,
                     )));
               });
         });
   }
 
   _showStaleProductList(int categoryId) {
-    context
-        .read<StaleProductProductsBloc>()
-        .add(GetStaleProductsRequested(date: selectedDate!,categoryId: categoryId));
+    context.read<StaleProductProductsBloc>().add(
+        GetStaleProductsRequested(date: selectedDate!, categoryId: categoryId));
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return BlocBuilder<StaleProductProductsBloc, StaleProductProductsState>(
-              builder: ((context, state) {
+          return BlocBuilder<StaleProductProductsBloc,
+              StaleProductProductsState>(builder: ((context, state) {
             return switch (state) {
               StaleProductsLoading() => const LoadingIndicator(),
               StaleProductsFailure() => const ErrorAnimation(),
-              StaleProductsSuccess() => state
-                      .staleProductsList!.isEmpty
+              StaleProductsSuccess() => state.staleProductsList!.isEmpty
                   ? const EmptyContent()
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1125,14 +1156,13 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                   tileColor: index.isOdd
                                       ? GlobalVariables.oddItemColor
                                       : GlobalVariables.evenItemColor,
-                                  title: Text(state
-                                      .staleProductsList![index].name),
+                                  title: Text(
+                                      state.staleProductsList![index].name!),
                                   trailing: todayDate
                                       ? IconButton(
                                           onPressed: () {
-                                            _addStaleProduct(
-                                                state.staleProductsList![
-                                                    index]);
+                                            _addStaleProduct(state
+                                                .staleProductsList![index]);
                                           },
                                           icon: const Icon(Icons.add),
                                           color: GlobalVariables.secondaryColor)
@@ -1149,7 +1179,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         });
   }
 
-  _addStaleProduct(StaleProductModel staleBread) {
+  _addStaleProduct(ProductNotAddedModel staleBread) {
     TextEditingController controller = TextEditingController();
     showDialog(
         context: context,
@@ -1163,6 +1193,182 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                           staleBreadModel: staleBread, staleQuantity: amount),
                     );
               });
+        });
+  }
+
+  _addReceivedPaymentFromServiceDialog(int serviceTypeId, String title) {
+    context.read<ReceivedMoneyFromServiceBloc>().add(
+        ReceivedMoneyFromServiceGetListRequested(
+            date: selectedDate!, servisTypeId: serviceTypeId));
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<ReceivedMoneyFromServiceBloc,
+              ReceivedMoneyFromServiceState>(builder: ((context, state) {
+            return switch (state) {
+              ReceivedMoneyFromServiceLoading() => const LoadingIndicator(),
+              ReceivedMoneyFromServiceFailure() => const ErrorAnimation(),
+              ReceivedMoneyFromServiceSuccess() =>
+                state.receivedMoneyFromService != null
+                    ? CustomConfirmationDialog(
+                        title: "Uyarı",
+                        onTap: () {},
+                        content: "Servisten para teslim alınmış")
+                    : CustomPaymentDialog(
+                        title: title,
+                        controller: controller,
+                        onSave: (paidAmount) {
+                          if (paidAmount < 1) {
+                            showToastMessage("Geçerli bir tutar girilmeli!");
+                            return;
+                          }
+                          context.read<ReceivedMoneyFromServiceBloc>().add(
+                              ReceivedMoneyFromServicePostRequested(
+                                  receivedMoneyFromService:
+                                      ReceivedMoneyFromServiceModel(
+                                          id: 0,
+                                          userId: widget.user.id!,
+                                          amount: paidAmount,
+                                          serviceTypeId: serviceTypeId,
+                                          date: selectedDate!)));
+                        })
+            };
+          }));
+        });
+  }
+
+  _updateReceivedPaymentFromService(int serviceTypeId, String title) {
+    context.read<ReceivedMoneyFromServiceBloc>().add(
+        ReceivedMoneyFromServiceGetListRequested(
+            date: selectedDate!, servisTypeId: serviceTypeId));
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<ReceivedMoneyFromServiceBloc,
+              ReceivedMoneyFromServiceState>(builder: ((context, state) {
+            return switch (state) {
+              ReceivedMoneyFromServiceLoading() => const LoadingIndicator(),
+              ReceivedMoneyFromServiceFailure() => const ErrorAnimation(),
+              ReceivedMoneyFromServiceSuccess() => state
+                          .receivedMoneyFromService ==
+                      null
+                  ? CustomConfirmationDialog(
+                      title: "Uyarı",
+                      onTap: () {},
+                      content: "Para teslimatı daha yapılmadı")
+                  : CustomPaymentDialog(
+                      title: "Güncelleme",
+                      firstText: title,
+                      controller: TextEditingController(
+                          text: state.receivedMoneyFromService!.amount
+                              .toString()),
+                      onSave: (paidAmount) {
+                        if (paidAmount < 1) {
+                          showToastMessage("Geçerli bir tutar girilmeli!");
+                          return;
+                        }
+                        if (paidAmount ==
+                            state.receivedMoneyFromService!.amount) {
+                          return;
+                        }
+                        context.read<ReceivedMoneyFromServiceBloc>().add(
+                            ReceivedMoneyFromServiceUpdateRequested(
+                                receivedMoneyFromService:
+                                    ReceivedMoneyFromServiceModel(
+                                        id: state.receivedMoneyFromService!.id,
+                                        userId: state
+                                            .receivedMoneyFromService!.userId,
+                                        amount: paidAmount,
+                                        serviceTypeId: state
+                                            .receivedMoneyFromService!
+                                            .serviceTypeId,
+                                        date: state
+                                            .receivedMoneyFromService!.date)));
+                      })
+            };
+          }));
+        });
+  }
+
+  _addBreadCountingDialog(DateTime date) {
+    context
+        .read<BreadCountingBloc>()
+        .add(BreadCountingGetListRequested(date: date));
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<BreadCountingBloc, BreadCountingState>(
+              builder: ((context, state) {
+            return switch (state) {
+              BreadCountingLoading() => const LoadingIndicator(),
+              BreadCountingFailure() => const ErrorAnimation(),
+              BreadCountingSuccess() => state.breadCounting != null
+                  ? CustomConfirmationDialog(
+                      title: "Uyarı",
+                      onTap: () {},
+                      content: "Ekmek sayımı yapılmış")
+                  : CustomReceiveAmountDialog(
+                      title: 'Toplam ekmek sayımı ',
+                      controller: controller,
+                      onSave: (enteredQuantity) {
+                        if (enteredQuantity < 1) {
+                          showToastMessage("Geçerli bir tutar girilmeli!");
+                          return;
+                        }
+                        context.read<BreadCountingBloc>().add(
+                            BreadCountingPostRequested(
+                                breadCounting: BreadCountingModel(
+                                    id: 0,
+                                    userId: widget.user.id!,
+                                    quantity: enteredQuantity,
+                                    date: selectedDate!)));
+                      })
+            };
+          }));
+        });
+  }
+
+  _updateBreadCounting(DateTime date) {
+    context
+        .read<BreadCountingBloc>()
+        .add(BreadCountingGetListRequested(date: date));
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<BreadCountingBloc, BreadCountingState>(
+              builder: ((context, state) {
+            return switch (state) {
+              BreadCountingLoading() => const LoadingIndicator(),
+              BreadCountingFailure() => const ErrorAnimation(),
+              BreadCountingSuccess() => state.breadCounting == null
+                  ? CustomConfirmationDialog(
+                      title: "Uyarı",
+                      onTap: () {},
+                      content: "Ekmek sayımı daha yapılmadı")
+                  : CustomReceiveAmountDialog(
+                      title: 'Ekmek sayımı güncelleme',
+                      controller: TextEditingController(
+                          text: state.breadCounting!.quantity.toString()),
+                      onSave: (enteredQuantity) {
+                        if (enteredQuantity < 1) {
+                          showToastMessage("Geçerli bir tutar girilmeli!");
+                          return;
+                        }
+                        if (enteredQuantity == state.breadCounting!.quantity) {
+                          return;
+                        }
+                        context.read<BreadCountingBloc>().add(
+                            BreadCountingUpdateRequested(
+                                breadCounting: BreadCountingModel(
+                                    id: state.breadCounting!.id,
+                                    userId: state.breadCounting!.userId,
+                                    quantity: enteredQuantity,
+                                    date: state.breadCounting!.date)));
+                      })
+            };
+          }));
         });
   }
 }

@@ -10,10 +10,10 @@ part of 'stale_product_service.dart';
 
 class _StaleProductService implements StaleProductService {
   _StaleProductService(
-    this._dio, {
+    this._dio, 
     this.baseUrl,
-  }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+  ) {
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;
@@ -59,7 +59,7 @@ class _StaleProductService implements StaleProductService {
   }
 
   @override
-  Future<HttpResponse<List<StaleProductModel>>> getProductListByDate({
+  Future<HttpResponse<List<ProductNotAddedModel>>> getProductListByDate({
      DateTime? date,
      int? categoryId,
   }) async {
@@ -71,7 +71,7 @@ class _StaleProductService implements StaleProductService {
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<StaleProductModel>>>(Options(
+        _setStreamType<HttpResponse<List<ProductNotAddedModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -89,7 +89,7 @@ class _StaleProductService implements StaleProductService {
             ))));
     var value = _result.data!
         .map((dynamic i) =>
-            StaleProductModel.fromJson(i as Map<String, dynamic>))
+            ProductNotAddedModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;

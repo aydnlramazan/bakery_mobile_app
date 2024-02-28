@@ -9,7 +9,7 @@ part 'service_debt_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ServiceDebtApiService {
-  factory ServiceDebtApiService(Dio dio) = _ServiceDebtApiService;
+  factory ServiceDebtApiService(Dio dio, String baseUrl) = _ServiceDebtApiService;
 
   @GET("/api/DebtMarket/GetDebtsOfMarkets")
   Future<HttpResponse<List<ServiceDebtTotalModel>>> getServiceDebtMarketsList();

@@ -12,7 +12,7 @@ part 'service_services_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ServiceServicesApiService {
-  factory ServiceServicesApiService(Dio dio) = _ServiceServicesApiService;
+  factory ServiceServicesApiService(Dio dio, String baseUrl) = _ServiceServicesApiService;
 
   @GET("/api/Service/GetByDateServiceList")
   Future<HttpResponse<List<ServiceListModel>>> getServiceServicesByDate(

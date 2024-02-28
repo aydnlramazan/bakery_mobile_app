@@ -22,7 +22,7 @@ final class StaleProductsFailure extends StaleProductProductsState {
 final class StaleProductsSuccess extends StaleProductProductsState {
   
   @override
-  final List<StaleProductModel>? staleProductsList;
+  final List<ProductNotAddedModel>? staleProductsList;
   const StaleProductsSuccess({this.staleProductsList});
   @override
   List<Object?> get props => [staleProductsList];

@@ -9,6 +9,7 @@ import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/bread_counting/bread_counting_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/service_stale_product/service_stale_product_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
@@ -125,6 +126,9 @@ class MyApp extends StatelessWidget {
         ),
              BlocProvider<ReceivedMoneyFromServiceBloc>(
           create: (context) => ReceivedMoneyFromServiceBloc(sl()),
+        ),
+          BlocProvider<BreadCountingBloc>(
+          create: (context) => BreadCountingBloc(sl()),
         ),
       ],
       child: MaterialApp(

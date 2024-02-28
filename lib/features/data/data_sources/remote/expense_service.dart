@@ -8,7 +8,7 @@ part 'expense_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ExpenseService {
-  factory ExpenseService(Dio dio) = _ExpenseService;
+  factory ExpenseService(Dio dio, String baseUrl) = _ExpenseService;
   @GET("/api/Expense/GetExpensesByDate")
   Future<HttpResponse<List<ExpenseModel>>>
       getExpenseListByDate({@Query("date") DateTime date});

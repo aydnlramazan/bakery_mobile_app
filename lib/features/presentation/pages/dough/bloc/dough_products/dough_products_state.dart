@@ -24,7 +24,7 @@ final class DoughProductsFailure extends DoughProductsState {
 
 final class DoughProductsSuccess extends DoughProductsState {
   @override
-  final List<DoughProductModel>? doughProducts;
+  final List<ProductNotAddedModel>? doughProducts;
   const DoughProductsSuccess({this.doughProducts});
 
   @override

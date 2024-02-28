@@ -12,7 +12,7 @@ part 'service_account_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ServiceAccountService {
-  factory ServiceAccountService(Dio dio) = _ServiceAccountService;
+  factory ServiceAccountService(Dio dio, String baseUrl) = _ServiceAccountService;
   @GET("/api/MoneyReceivedFromMarket/GetMoneyReceivedMarketListByDate")
   Future<HttpResponse<List<ServiceAccountReceivedModel>>>
       getServiceAccountReceivedByDate({@Query("date") DateTime date});

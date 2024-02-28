@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'product_service.dart';
+part of 'bread_counting_service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'product_service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
 
-class _ProductApiService implements ProductApiService {
-  _ProductApiService(
+class _BreadCountingService implements BreadCountingService {
+  _BreadCountingService(
     this._dio, 
     this.baseUrl,
   ) {
@@ -21,27 +21,21 @@ class _ProductApiService implements ProductApiService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<AddedProductModel>>>
-      getAddedProductsByDateAndCategoryId({
-     DateTime? date,
-     int? categoryId,
-  }) async {
+  Future<HttpResponse<BreadCountingModel?>>
+      getBreadCountingByDate({ DateTime? date}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'date': date!.toIso8601String(),
-      r'categoryId': categoryId,
-    };
+    final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<AddedProductModel>>>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(
+        _setStreamType<HttpResponse<BreadCountingModel>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              '/api/ProductionList/GetAddedProductsByDateAndCategoryId',
+              '/api/BreadCounting/GetBreadCountingByDate',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -50,65 +44,21 @@ class _ProductApiService implements ProductApiService {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            AddedProductModel.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = _result.data == null
+        ? null
+        : BreadCountingModel.fromJson(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<List<ProductModel>>> getAvailableProductsByCategoryId({
-     DateTime? date,
-     int? categoryId,
-  }) async {
+  Future<HttpResponse<dynamic>> addBreadCounting(
+      { BreadCountingModel? breadCounting}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'date': date!.toIso8601String(),
-      r'categoryId': categoryId,
-    };
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ProductModel>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/ProductionList/GetNotAddedProductsByListAndCategoryId',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var value = _result.data!
-        .map((dynamic i) => ProductModel.fromJson(i as Map<String, dynamic>))
-        .toList();
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
-  }
-
-  @override
-  Future<HttpResponse<dynamic>> addProducts({
-     int? userId,
-     int? categoryId,
-     List<ProductToAddModel>? doughListProduct,
-     DateTime? date,
-  }) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'userId': userId,
-      r'categoryId': categoryId,
-      r'date': date!.toIso8601String(),
-    };
-    final _headers = <String, dynamic>{};
-    final _data = doughListProduct!.map((e) => e.toJson()).toList();
+    final _data = <String, dynamic>{};
+    _data.addAll(breadCounting!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'POST',
@@ -117,7 +67,7 @@ class _ProductApiService implements ProductApiService {
     )
             .compose(
               _dio.options,
-              '/api/ProductionList/AddProductionListAndDetail',
+              '/api/BreadCounting/AddBreadCounting',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -132,7 +82,8 @@ class _ProductApiService implements ProductApiService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> deleteProductById({ int? id}) async {
+  Future<HttpResponse<dynamic>> deleteBreadCountingById(
+      { int? id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
@@ -145,7 +96,7 @@ class _ProductApiService implements ProductApiService {
     )
             .compose(
               _dio.options,
-              '/api/ProductionList/DeleteProductionListDetail',
+              '/api/BreadCounting/DeleteBreadCountingById',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -160,13 +111,13 @@ class _ProductApiService implements ProductApiService {
   }
 
   @override
-  Future<HttpResponse<dynamic>> updateProduct(
-      { ProductToAddModel? product}) async {
+  Future<HttpResponse<dynamic>> updateBreadCounting(
+      { BreadCountingModel? breadCounting}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(product!.toJson());
+    _data.addAll(breadCounting!.toJson());
     final _result =
         await _dio.fetch(_setStreamType<HttpResponse<dynamic>>(Options(
       method: 'PUT',
@@ -175,7 +126,7 @@ class _ProductApiService implements ProductApiService {
     )
             .compose(
               _dio.options,
-              '/api/ProductionList/UpdateProductionListDetail',
+              '/api/BreadCounting/UpdateBreadCounting',
               queryParameters: queryParameters,
               data: _data,
             )

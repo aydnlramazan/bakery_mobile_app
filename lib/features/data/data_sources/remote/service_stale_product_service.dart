@@ -7,7 +7,7 @@ part 'service_stale_product_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ServiceStaleProduct {
-  factory ServiceStaleProduct(Dio dio) = _ServiceStaleProduct;
+  factory ServiceStaleProduct(Dio dio, String baseUrl) = _ServiceStaleProduct;
   @GET(
       "/api/ServiceStaleProduct/GetServiceStaleProductListByDateAndServiceTypeId")
   Future<HttpResponse<List<ServiceStaleProductModel>>>

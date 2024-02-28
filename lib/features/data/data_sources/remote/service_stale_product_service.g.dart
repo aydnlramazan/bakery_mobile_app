@@ -10,10 +10,10 @@ part of 'service_stale_product_service.dart';
 
 class _ServiceStaleProduct implements ServiceStaleProduct {
   _ServiceStaleProduct(
-    this._dio, {
+    this._dio, 
     this.baseUrl,
-  }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+  ) {
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;

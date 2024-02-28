@@ -7,9 +7,9 @@ part 'received_money_from_service_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class ReceivedMoneyFromService {
-  factory ReceivedMoneyFromService(Dio dio) = _ReceivedMoneyFromService;
+  factory ReceivedMoneyFromService(Dio dio,String baseUrl) = _ReceivedMoneyFromService;
   @GET("/api/ReceivedMoneyFromService/GetReceivedMoneyFromServiceByDateAndServiceType")
-  Future<HttpResponse<List<ReceivedMoneyFromServiceModel>>>getReceivedMoneyFromServiceByDateAndServiceType({@Query("date") DateTime date, @Query("servisTypeId") int servisTypeId});
+  Future<HttpResponse<ReceivedMoneyFromServiceModel?>>getReceivedMoneyFromServiceByDateAndServiceType({@Query("date") DateTime date, @Query("serviceType") int servisTypeId});
   @POST("/api/ReceivedMoneyFromService/AddReceivedMoneyFromService")
   Future<HttpResponse> addReceivedMoneyFromService({@Body() ReceivedMoneyFromServiceModel receivedMoneyFromService});
   @DELETE("/api/ReceivedMoneyFromService/DeleteReceivedMoneyFromServiceById")

@@ -28,6 +28,7 @@ import 'package:bakery_app/features/domain/usecases/service_account_usecases.dar
 import 'package:bakery_app/features/domain/usecases/service_market_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/stale_product_usecase.dart';
 import 'package:bakery_app/features/domain/usecases/user_login_usecase.dart';
+import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/bread_counting/bread_counting_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/given_product_to_service/given_product_to_service_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/service_stale_product/service_stale_product_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/service/bloc/service_account_left/service_account_left_bloc.dart';
@@ -40,10 +41,12 @@ import 'package:bakery_app/features/presentation/pages/service/bloc/service_stal
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
+import 'features/data/data_sources/remote/bread_counting_service.dart';
 import 'features/data/data_sources/remote/received_money_from_service_service.dart';
 import 'features/data/data_sources/remote/service_stale_product_service.dart';
 import 'features/data/data_sources/remote/service_stale_service.dart';
 import 'features/data/data_sources/remote/stale_product_service.dart';
+import 'features/data/repositories/bread_counting_repository_impl.dart';
 import 'features/data/repositories/expense_repository_impl.dart';
 import 'features/data/repositories/given_product_to_service_repository_impl.dart';
 import 'features/data/repositories/received_money_from_service_repository_impl.dart';
@@ -53,6 +56,7 @@ import 'features/data/repositories/service_stale_product_repository_impl.dart';
 import 'features/data/repositories/service_stale_repository_impl.dart';
 import 'features/data/repositories/stale_bread_repository_impl.dart';
 import 'features/data/repositories/stale_product_repository_impl.dart';
+import 'features/domain/repositories/bread_counting_repository.dart';
 import 'features/domain/repositories/given_product_to_service_repository.dart';
 import 'features/domain/repositories/received_money_from_service_repository.dart';
 import 'features/domain/repositories/service_debt_repository.dart';
@@ -60,6 +64,7 @@ import 'features/domain/repositories/service_stale_product_repository.dart';
 import 'features/domain/repositories/service_stale_repository.dart';
 import 'features/domain/repositories/stale_bread_repository.dart';
 import 'features/domain/repositories/stale_product_repository.dart';
+import 'features/domain/usecases/bread_counting_usecase.dart';
 import 'features/domain/usecases/received_money_from_service_usecase.dart';
 import 'features/domain/usecases/service_debt_usecase.dart';
 import 'features/domain/usecases/service_stale_product_usecase.dart';
@@ -85,44 +90,52 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Dio
   sl.registerSingleton<Dio>(Dio());
+  sl.registerSingleton<String>(baseUrl);
 
   // Dependencies
   //sl.registerSingleton<Api>(Api());
-  sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
+  sl.registerSingleton<AuthApiService>(AuthApiService(sl(),sl()));
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl()));
-  sl.registerSingleton<DoughApiService>(DoughApiService(sl()));
+  sl.registerSingleton<DoughApiService>(DoughApiService(sl(), sl()));
   sl.registerSingleton<DoughRepository>(DoughRepositoryImpl(sl()));
-  sl.registerSingleton<ProductApiService>(ProductApiService(sl()));
+  sl.registerSingleton<ProductApiService>(ProductApiService(sl(), sl()));
   sl.registerSingleton<ProductRepository>(ProductRepositoryImpl(sl()));
   sl.registerSingleton<ServiceServicesApiService>(
-      ServiceServicesApiService(sl()));
+      ServiceServicesApiService(sl(), sl()));
   sl.registerSingleton<ServiceMarketRepository>(
       ServiceMarketRepositoryImpl(sl()));
-  sl.registerSingleton<ServiceAccountService>(ServiceAccountService(sl()));
+  sl.registerSingleton<ServiceAccountService>(
+      ServiceAccountService(sl(), sl()));
   sl.registerSingleton<ServiceAccountRepository>(
       ServiceAccountRepositoryImpl(sl()));
-  sl.registerSingleton<ServiceStaleService>(ServiceStaleService(sl()));
+  sl.registerSingleton<ServiceStaleService>(ServiceStaleService(sl(), sl()));
   sl.registerSingleton<ServiceStaleRepository>(
       ServiceStaleRepositoryImpl(sl()));
-  sl.registerSingleton<ServiceDebtApiService>(ServiceDebtApiService(sl()));
+  sl.registerSingleton<ServiceDebtApiService>(
+      ServiceDebtApiService(sl(), sl()));
   sl.registerSingleton<ServiceDebtRepository>(ServiceDebtRepositoryImpl(sl()));
-  sl.registerSingleton<ExpenseService>(ExpenseService(sl()));
+  sl.registerSingleton<ExpenseService>(ExpenseService(sl(), sl()));
   sl.registerSingleton<ExpenseRepository>(ExpenseRepositoryImpl(sl()));
-  sl.registerSingleton<GivenProductToService>(GivenProductToService(sl()));
+  sl.registerSingleton<GivenProductToService>(
+      GivenProductToService(sl(), sl()));
   sl.registerSingleton<GivenProductToServiceRepository>(
       GivenProductToServiceRepositoryImpl(sl()));
-  sl.registerSingleton<ServiceStaleProduct>(ServiceStaleProduct(sl()));
+  sl.registerSingleton<ServiceStaleProduct>(ServiceStaleProduct(sl(), sl()));
   sl.registerSingleton<ServiceStaleProductRepository>(
       ServiceStaleProductRepositoryImpl(sl()));
-  sl.registerSingleton<StaleBreadService>(StaleBreadService(sl()));
+  sl.registerSingleton<StaleBreadService>(StaleBreadService(sl(), sl()));
   sl.registerSingleton<StaleBreadRepository>(StaleBreadRepositoryImpl(sl()));
-  sl.registerSingleton<StaleProductService>(StaleProductService(sl()));
-  sl.registerSingleton<StaleProductRepository>(StaleProductRepositoryImpl(sl()));
-    sl.registerSingleton<ReceivedMoneyFromService>(ReceivedMoneyFromService(sl()));
+  sl.registerSingleton<StaleProductService>(StaleProductService(sl(), sl()));
+  sl.registerSingleton<StaleProductRepository>(
+      StaleProductRepositoryImpl(sl()));
+  sl.registerSingleton<ReceivedMoneyFromService>(
+      ReceivedMoneyFromService(sl(), sl()));
   sl.registerSingleton<ReceivedMoneyFromServiceRepository>(
       ReceivedMoneyFromServiceRepositoryImpl(sl()));
-
-
+  sl.registerSingleton<BreadCountingService>(
+      BreadCountingService(sl(), sl()));
+  sl.registerSingleton<BreadCountingRepository>(
+      BreadCountingRepositoryImpl(sl()));
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
@@ -139,8 +152,9 @@ Future<void> initializeDependencies() async {
       ServiceStaleProductUseCase(sl()));
   sl.registerSingleton<StaleBreadUseCase>(StaleBreadUseCase(sl()));
   sl.registerSingleton<StaleProductUseCase>(StaleProductUseCase(sl()));
-  sl.registerSingleton<ReceivedMoneyFromServiceUseCase>(ReceivedMoneyFromServiceUseCase(sl()));
-
+  sl.registerSingleton<ReceivedMoneyFromServiceUseCase>(
+      ReceivedMoneyFromServiceUseCase(sl()));
+  sl.registerSingleton<BreadCountingUseCase>(BreadCountingUseCase(sl()));
 
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(sl()));
@@ -174,6 +188,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<StaleProductBloc>(() => StaleProductBloc(sl()));
   sl.registerFactory<StaleProductProductsBloc>(
       () => StaleProductProductsBloc(sl()));
-        sl.registerFactory<ReceivedMoneyFromServiceBloc>(
+  sl.registerFactory<ReceivedMoneyFromServiceBloc>(
       () => ReceivedMoneyFromServiceBloc(sl()));
+  sl.registerFactory<BreadCountingBloc>(() => BreadCountingBloc(sl()));
 }

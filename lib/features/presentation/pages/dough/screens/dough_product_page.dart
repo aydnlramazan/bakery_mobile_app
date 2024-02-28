@@ -1,7 +1,7 @@
 import 'package:bakery_app/features/data/data_sources/local/shared_preference.dart';
 import 'package:bakery_app/core/utils/toast_message.dart';
 import 'package:bakery_app/features/data/models/dough_added_product.dart';
-import 'package:bakery_app/features/data/models/dough_product.dart';
+import 'package:bakery_app/features/data/models/product_not_added.dart';
 import 'package:bakery_app/features/data/models/dough_product_to_add.dart';
 import 'package:bakery_app/features/presentation/widgets/added_product.dart';
 import 'package:bakery_app/features/presentation/widgets/available_product.dart';
@@ -21,10 +21,14 @@ import '../bloc/dough_products/dough_products_bloc.dart';
 
 class DoughProductPage extends StatelessWidget {
   static const String routeName = "dough-products-page";
-   int listId;
+  int listId;
   final bool canEdit;
   final DateTime date;
-  DoughProductPage({super.key, required this.listId, required this.canEdit, required this.date});
+  DoughProductPage(
+      {super.key,
+      required this.listId,
+      required this.canEdit,
+      required this.date});
 
   final List<DoughProductToAddModel> listToPost = List.empty(growable: true);
 
@@ -212,7 +216,8 @@ class DoughProductPage extends StatelessWidget {
                             controller: controllers[index],
                             index: index,
                             onPressed: () {
-                              if (controllers[index].text.isNotEmpty && controllers[index].text != "0") {
+                              if (controllers[index].text.isNotEmpty &&
+                                  controllers[index].text != "0") {
                                 _addProductToAddedList(
                                     context,
                                     state.doughProducts![index],
@@ -237,7 +242,7 @@ class DoughProductPage extends StatelessWidget {
       if (user != null) {
         context.read<DoughAddedProductsBloc>().add(
             DoughPostAddedProductRequested(
-                products: listToPost, userId: user.id!,date: date));
+                products: listToPost, userId: user.id!, date: date));
       }
     } else {
       showToastMessage("Yeni ürün eklemelisiniz!");
@@ -315,7 +320,7 @@ class DoughProductPage extends StatelessWidget {
                 context.read<DoughAddedProductsBloc>().add(
                     DoughRemoveAddedProductRequested(product: addedProduct));
                 context.read<DoughProductsBloc>().add(DoughAddProductRequested(
-                    product: DoughProductModel(
+                    product: ProductNotAddedModel(
                         id: addedProduct.doughFactoryProductId,
                         name: addedProduct.doughFactoryProductName)));
               });
@@ -323,7 +328,7 @@ class DoughProductPage extends StatelessWidget {
   }
 
   _addProductToAddedList(
-      BuildContext context, DoughProductModel productModel, int quantity) {
+      BuildContext context, ProductNotAddedModel productModel, int quantity) {
     context
         .read<DoughProductsBloc>()
         .add(DoughRemoveProductRequested(product: productModel));

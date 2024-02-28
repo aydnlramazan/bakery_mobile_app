@@ -6,7 +6,7 @@ class ReceivedMoneyFromServiceUseCase {
   final ReceivedMoneyFromServiceRepository _receivedMoneyFromServiceRepository;
   ReceivedMoneyFromServiceUseCase(this._receivedMoneyFromServiceRepository);
 
-  Future<DataState<List<ReceivedMoneyFromServiceEntity>>>
+  Future<DataState<ReceivedMoneyFromServiceEntity?>>
       getReceivedMoneyFromServiceByDateAndServiceType(DateTime date, int servisTypeId) {
     return _receivedMoneyFromServiceRepository
         .getReceivedMoneyFromServiceByDateAndServiceType(date, servisTypeId);

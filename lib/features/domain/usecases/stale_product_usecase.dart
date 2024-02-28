@@ -1,5 +1,5 @@
 import '../../../core/resources/data_state.dart';
-import '../entities/stale_product.dart';
+import '../entities/product_not_added.dart';
 import '../entities/stale_product_added.dart';
 import '../entities/stale_product_to_add.dart';
 import '../repositories/stale_product_repository.dart';
@@ -13,7 +13,7 @@ class StaleProductUseCase {
     return _staleProductRepository.getAddedStaleProductListByDate(date,categoryId);
   }
 
-  Future<DataState<List<StaleProductEntity>>> getProductListByDate(
+  Future<DataState<List<ProductNotAddedEntity>>> getProductListByDate(
       DateTime date, int categoryId) async {
     return _staleProductRepository.getProductProductListByDate(date, categoryId);
   }

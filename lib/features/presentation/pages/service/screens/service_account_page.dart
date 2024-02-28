@@ -220,8 +220,7 @@ class ServiceAccountPage extends StatelessWidget {
         builder: (BuildContext context) {
           return CustomConfirmationDialog(
               title: 'Silme',
-              content:
-                  '${receivedModel.marketName} market\'in ödemesini silmek için emin misiniz?',
+              content: '${receivedModel.marketName} market\'in ödemesini silmek için emin misiniz?',
               onTap: () {
                 context.read<ServiceAccountReceivedBloc>().add(
                     ServiceRemoveAccountReceivedRequested(

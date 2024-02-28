@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/utils/toast_message.dart';
 class CustomReceiveAmountDialog extends StatelessWidget {
-    final String title;
+  final String title;
   final TextEditingController controller;
   final Function(int) onSave;
   const CustomReceiveAmountDialog({super.key, required this.controller, required this.onSave, required this.title});

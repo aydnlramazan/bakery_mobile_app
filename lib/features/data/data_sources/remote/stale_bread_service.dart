@@ -10,7 +10,7 @@ part 'stale_bread_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class StaleBreadService {
-  factory StaleBreadService(Dio dio) = _StaleBreadService;
+  factory StaleBreadService(Dio dio, String baseUrl) = _StaleBreadService;
   @GET("/api/StaleBread/GetStaleBreadListByDate")
   Future<HttpResponse<List<StaleBreadAddedModel>>>
       getAddedStaleBreadListByDate({@Query("date") DateTime date});

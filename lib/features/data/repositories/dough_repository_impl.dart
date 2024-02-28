@@ -6,7 +6,7 @@ import 'package:bakery_app/core/resources/data_state.dart';
 import 'package:bakery_app/features/data/data_sources/remote/dough_service.dart';
 import 'package:bakery_app/features/data/models/dough_list.dart';
 import 'package:bakery_app/features/data/models/dough_product_to_add.dart';
-import 'package:bakery_app/features/data/models/dough_product.dart';
+import 'package:bakery_app/features/data/models/product_not_added.dart';
 import 'package:bakery_app/features/domain/entities/added_dough_list_product.dart';
 import 'package:bakery_app/features/domain/entities/dough_product_to_add.dart';
 import 'package:dio/dio.dart';
@@ -36,7 +36,7 @@ class DoughRepositoryImpl extends DoughRepository {
   }
 
   @override
-  Future<DataState<List<DoughProductModel>>> getAvailableDoughProducts(
+  Future<DataState<List<ProductNotAddedModel>>> getAvailableDoughProducts(
       int listId) async {
     try {
       final httpResponse =
@@ -120,8 +120,8 @@ class DoughRepositoryImpl extends DoughRepository {
   }
 
   @override
-  Future<DataState<int>> addDoughProducts(
-      int userId, List<DoughProductToAddEntity> doughListProduct,DateTime date) async {
+  Future<DataState<int>> addDoughProducts(int userId,
+      List<DoughProductToAddEntity> doughListProduct, DateTime date) async {
     try {
       final List<DoughProductToAddModel> doughListProductModels =
           doughListProduct
@@ -129,11 +129,9 @@ class DoughRepositoryImpl extends DoughRepository {
               .toList();
 
       final httpResponse = await _doughApiService.addDoughProducts(
-          doughListProduct: doughListProductModels,
-          userId: userId,
-date: date
-          );
-      if (httpResponse.response.statusCode! >= 200 && httpResponse.response.statusCode! <= 300  ) {
+          doughListProduct: doughListProductModels, userId: userId, date: date);
+      if (httpResponse.response.statusCode! >= 200 &&
+          httpResponse.response.statusCode! <= 300) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(

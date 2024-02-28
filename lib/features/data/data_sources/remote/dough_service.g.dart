@@ -10,10 +10,10 @@ part of 'dough_service.dart';
 
 class _DoughApiService implements DoughApiService {
   _DoughApiService(
-    this._dio, {
+    this._dio, 
     this.baseUrl,
-  }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+  ) {
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;
@@ -22,7 +22,7 @@ class _DoughApiService implements DoughApiService {
 
   @override
   Future<HttpResponse<List<DoughListModel>>> getListsByDate(
-      { DateTime? date}) async {
+      {DateTime? date}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'date': date!.toIso8601String()};
     final _headers = <String, dynamic>{};
@@ -53,12 +53,12 @@ class _DoughApiService implements DoughApiService {
 
   @override
   Future<HttpResponse<dynamic>> addDoughProducts({
-     int? userId,
-     List<DoughProductToAddModel>? doughListProduct,
-     DateTime? date,
+    int? userId,
+    List<DoughProductToAddModel>? doughListProduct,
+    DateTime? date,
   }) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'userId': userId,r'date':date};
+    final queryParameters = <String, dynamic>{r'userId': userId, r'date': date};
     final _headers = <String, dynamic>{};
     final _data = doughListProduct!.map((e) => e.toJson()).toList();
     final _result =
@@ -85,7 +85,7 @@ class _DoughApiService implements DoughApiService {
 
   @override
   Future<HttpResponse<List<DoughAddedProductModel>>> getAddedProductsByListId(
-      { int? doughFactoryListId}) async {
+      {int? doughFactoryListId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'doughFactoryListId': doughFactoryListId
@@ -118,14 +118,14 @@ class _DoughApiService implements DoughApiService {
   }
 
   @override
-  Future<HttpResponse<List<DoughProductModel>>> getAvailableProductsByListId(
-      { int? listId}) async {
+  Future<HttpResponse<List<ProductNotAddedModel>>> getAvailableProductsByListId(
+      {int? listId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'doughFactoryListId': listId};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<DoughProductModel>>>(Options(
+        _setStreamType<HttpResponse<List<ProductNotAddedModel>>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -143,14 +143,14 @@ class _DoughApiService implements DoughApiService {
             ))));
     var value = _result.data!
         .map((dynamic i) =>
-            DoughProductModel.fromJson(i as Map<String, dynamic>))
+            ProductNotAddedModel.fromJson(i as Map<String, dynamic>))
         .toList();
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }
 
   @override
-  Future<HttpResponse<dynamic>> deleteProductFromList({ int? id}) async {
+  Future<HttpResponse<dynamic>> deleteProductFromList({int? id}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
@@ -179,7 +179,7 @@ class _DoughApiService implements DoughApiService {
 
   @override
   Future<HttpResponse<dynamic>> updateProductFromList(
-      { DoughProductToAddModel? doughListProduct}) async {
+      {DoughProductToAddModel? doughListProduct}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

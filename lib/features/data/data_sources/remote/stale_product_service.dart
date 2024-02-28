@@ -3,19 +3,19 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../../models/stale_product.dart';
+import '../../models/product_not_added.dart';
 import '../../models/stale_product_to_add.dart';
 
 part 'stale_product_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class StaleProductService {
-  factory StaleProductService(Dio dio) = _StaleProductService;
+  factory StaleProductService(Dio dio, String baseUrl) = _StaleProductService;
   @GET("/api/StaleProduct/GetByDateAndCategory")
   Future<HttpResponse<List<StaleProductAddedModel>>>
       getAddedStaleProductListByDate({@Query("date") DateTime date, @Query("categoryId") int categoryId});
   @GET("/api/StaleProduct/GetProductsNotAddedToStale")
-  Future<HttpResponse<List<StaleProductModel>>>
+  Future<HttpResponse<List<ProductNotAddedModel>>>
       getProductListByDate({@Query("date") DateTime date, @Query("categoryId") int categoryId});
   @POST("/api/StaleProduct/AddStaleProduct")
   Future<HttpResponse> addStaleProduct(

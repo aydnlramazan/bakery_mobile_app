@@ -10,10 +10,10 @@ part of 'received_money_from_service_service.dart';
 
 class _ReceivedMoneyFromService implements ReceivedMoneyFromService {
   _ReceivedMoneyFromService(
-    this._dio, {
+    this._dio, 
     this.baseUrl,
-  }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+  ) {
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;
@@ -21,7 +21,7 @@ class _ReceivedMoneyFromService implements ReceivedMoneyFromService {
   String? baseUrl;
 
   @override
-  Future<HttpResponse<List<ReceivedMoneyFromServiceModel>>>
+  Future<HttpResponse<ReceivedMoneyFromServiceModel?>>
       getReceivedMoneyFromServiceByDateAndServiceType({
      DateTime? date,
      int? servisTypeId,
@@ -29,32 +29,30 @@ class _ReceivedMoneyFromService implements ReceivedMoneyFromService {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'date': date!.toIso8601String(),
-      r'servisTypeId': servisTypeId,
+      r'serviceType': servisTypeId,
     };
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<HttpResponse<List<ReceivedMoneyFromServiceModel>>>(
-            Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(
+        _setStreamType<HttpResponse<ReceivedMoneyFromServiceModel>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-                .compose(
-                  _dio.options,
-                  '/api/ReceivedMoneyFromService/GetReceivedMoneyFromServiceByDateAndServiceType',
-                  queryParameters: queryParameters,
-                  data: _data,
-                )
-                .copyWith(
-                    baseUrl: _combineBaseUrls(
-                  _dio.options.baseUrl,
-                  baseUrl,
-                ))));
-    var value = _result.data!
-        .map((dynamic i) =>
-            ReceivedMoneyFromServiceModel.fromJson(i as Map<String, dynamic>))
-        .toList();
+            .compose(
+              _dio.options,
+              '/api/ReceivedMoneyFromService/GetReceivedMoneyFromServiceByDateAndServiceType',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = _result.data == null
+        ? null
+        : ReceivedMoneyFromServiceModel.fromJson(_result.data!);
     final httpResponse = HttpResponse(value, _result);
     return httpResponse;
   }

@@ -9,7 +9,7 @@ final class GetStaleProductsRequested extends StaleProductProductsEvent {
 }
 
 final class PostStaleProductsRequested extends StaleProductProductsEvent {
-  final StaleProductModel staleBreadModel;
+  final ProductNotAddedModel staleBreadModel;
   final int staleQuantity;
   PostStaleProductsRequested({
     required this.staleBreadModel,

@@ -7,7 +7,7 @@ part 'auth_service.g.dart';
 
 @RestApi(baseUrl: baseUrl)
 abstract class AuthApiService {
-  factory AuthApiService(Dio dio) = _AuthApiService;
+  factory AuthApiService(Dio dio,String baseUrl) = _AuthApiService;
   @POST("/api/Auth/login")
   Future<HttpResponse<UserModel>> loginUser({
     @Query("userName") String? userName,

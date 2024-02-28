@@ -1,7 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:bakery_app/core/resources/data_state.dart';
-import 'package:bakery_app/features/data/models/dough_product.dart';
+import 'package:bakery_app/features/data/models/product_not_added.dart';
 import 'package:bakery_app/features/domain/usecases/dough_factory_usecases.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -26,11 +26,12 @@ class DoughProductsBloc extends Bloc<DoughProductsEvent, DoughProductsState> {
         await _doughUseCase.getAvailableDoughProducts(event.listId);
 
     if (dataState is DataSuccess && dataState.data != null) {
-      emit(DoughProductsSuccess(doughProducts: dataState.data as List<DoughProductModel>));
+      emit(DoughProductsSuccess(
+          doughProducts: dataState.data as List<ProductNotAddedModel>));
     }
 
     if (dataState is DataFailed) {
-      emit(DoughProductsFailure(error:dataState.error));
+      emit(DoughProductsFailure(error: dataState.error));
     }
   }
 
@@ -39,10 +40,12 @@ class DoughProductsBloc extends Bloc<DoughProductsEvent, DoughProductsState> {
     final state = this.state;
     if (state is DoughProductsSuccess) {
       try {
-        emit(DoughProductsSuccess(doughProducts: [...?state.doughProducts,event.product]));
+        emit(DoughProductsSuccess(
+            doughProducts: [...?state.doughProducts, event.product]));
       } catch (_) {
-        emit(DoughProductsFailure(error:DioException.requestCancelled(
-            requestOptions: RequestOptions(), reason: "Faild!")));
+        emit(DoughProductsFailure(
+            error: DioException.requestCancelled(
+                requestOptions: RequestOptions(), reason: "Faild!")));
       }
     }
   }
@@ -53,11 +56,12 @@ class DoughProductsBloc extends Bloc<DoughProductsEvent, DoughProductsState> {
     if (state is DoughProductsSuccess) {
       try {
         print("onRemoveProductFromList: ${state.doughProducts}");
-        emit(DoughProductsSuccess(doughProducts:
-            [...?state.doughProducts]..remove(event.product)));
+        emit(DoughProductsSuccess(
+            doughProducts: [...?state.doughProducts]..remove(event.product)));
       } catch (_) {
-        emit(DoughProductsFailure(error:DioException.requestCancelled(
-            requestOptions: RequestOptions(), reason: "Faild!")));
+        emit(DoughProductsFailure(
+            error: DioException.requestCancelled(
+                requestOptions: RequestOptions(), reason: "Faild!")));
         print("catch remove ${_.toString()}");
       }
     }

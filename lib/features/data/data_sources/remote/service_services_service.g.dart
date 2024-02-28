@@ -10,10 +10,10 @@ part of 'service_services_service.dart';
 
 class _ServiceServicesApiService implements ServiceServicesApiService {
   _ServiceServicesApiService(
-    this._dio, {
+    this._dio, 
     this.baseUrl,
-  }) {
-    baseUrl ??= 'https://192.168.12.54:7207';
+  ) {
+    baseUrl ??= 'https://192.168.1.3:7207';
   }
 
   final Dio _dio;

@@ -17,23 +17,22 @@ class ReceivedMoneyFromServiceBloc
 
   ReceivedMoneyFromServiceBloc(this._receivedMoneyFromServiceUseCase)
       : super(const ReceivedMoneyFromServiceLoading()) {
-   on<ReceivedMoneyFromServiceGetListRequested>(onGetReceivedMoneyFromServiceList);
+    on<ReceivedMoneyFromServiceGetListRequested>(
+        onGetReceivedMoneyFromServiceList);
     on<ReceivedMoneyFromServicePostRequested>(onPostReceivedMoneyFromService);
-    on<ReceivedMoneyFromServiceUpdateRequested>(onUpdateReceivedMoneyFromService);
-    on<ReceivedMoneyFromServiceDeleteRequested>(onDeleteReceivedMoneyFromService);
+    on<ReceivedMoneyFromServiceUpdateRequested>(
+        onUpdateReceivedMoneyFromService);
+    on<ReceivedMoneyFromServiceDeleteRequested>(
+        onDeleteReceivedMoneyFromService);
   }
   void onGetReceivedMoneyFromServiceList(
       ReceivedMoneyFromServiceGetListRequested event,
       Emitter<ReceivedMoneyFromServiceState> emit) async {
     emit(const ReceivedMoneyFromServiceLoading());
-    print('event service type: ${event.servisTypeId}');
-    final dataState = await _receivedMoneyFromServiceUseCase
-        .getReceivedMoneyFromServiceByDateAndServiceType(
-            event.date, event.servisTypeId);
+    final dataState = await _receivedMoneyFromServiceUseCase.getReceivedMoneyFromServiceByDateAndServiceType(event.date, event.servisTypeId);
     if (dataState is DataSuccess) {
-      emit(ReceivedMoneyFromServiceSuccess(
-          receivedMoneyFromService:
-              dataState.data as ReceivedMoneyFromServiceModel));
+      print("Received money form service data:  ${dataState.data}");
+      emit(ReceivedMoneyFromServiceSuccess(receivedMoneyFromService:dataState.data != null?dataState.data as ReceivedMoneyFromServiceModel:null ));
     }
 
     if (dataState is DataFailed) {
@@ -44,19 +43,16 @@ class ReceivedMoneyFromServiceBloc
   void onPostReceivedMoneyFromService(
       ReceivedMoneyFromServicePostRequested event,
       Emitter<ReceivedMoneyFromServiceState> emit) async {
-   
+
     emit(const ReceivedMoneyFromServiceLoading());
 
-    final dataState =
-        await _receivedMoneyFromServiceUseCase.addReceivedMoneyFromService(
-            event.receivedMoneyFromService);
+    final dataState = await _receivedMoneyFromServiceUseCase
+        .addReceivedMoneyFromService(event.receivedMoneyFromService);
 
     if (dataState is DataSuccess) {
-      emit(ReceivedMoneyFromServiceSuccess(receivedMoneyFromService: 
-       
-        event.receivedMoneyFromService
-      ));
-      showToastMessage('Teslimat başarıyla eklendi');
+      emit(ReceivedMoneyFromServiceSuccess(
+          receivedMoneyFromService: event.receivedMoneyFromService));
+      showToastMessage('Para başarıyla teslim alındı');
     }
 
     if (dataState is DataFailed) {
@@ -67,14 +63,12 @@ class ReceivedMoneyFromServiceBloc
   void onUpdateReceivedMoneyFromService(
       ReceivedMoneyFromServiceUpdateRequested event,
       Emitter<ReceivedMoneyFromServiceState> emit) async {
-    final state = this.state;
     emit(const ReceivedMoneyFromServiceLoading());
-    final dataState =
-        await _receivedMoneyFromServiceUseCase.updateReceivedMoneyFromService(
-            event.receivedMoneyFromService);
+    final dataState = await _receivedMoneyFromServiceUseCase.updateReceivedMoneyFromService(event.receivedMoneyFromService);
 
     if (dataState is DataSuccess) {
-      emit(ReceivedMoneyFromServiceSuccess(receivedMoneyFromService: event.receivedMoneyFromService));
+      emit(ReceivedMoneyFromServiceSuccess(
+          receivedMoneyFromService: event.receivedMoneyFromService));
       showToastMessage('Teslimat başarıyla güncellendi');
     }
 
@@ -83,15 +77,12 @@ class ReceivedMoneyFromServiceBloc
     }
   }
 
-  void onDeleteReceivedMoneyFromService(
-      ReceivedMoneyFromServiceDeleteRequested event,
+  void onDeleteReceivedMoneyFromService(ReceivedMoneyFromServiceDeleteRequested event,
       Emitter<ReceivedMoneyFromServiceState> emit) async {
-   
     emit(const ReceivedMoneyFromServiceLoading());
 
-    final dataState =
-        await _receivedMoneyFromServiceUseCase.deleteReceivedMoneyFromServiceById(
-            event.id);
+    final dataState = await _receivedMoneyFromServiceUseCase
+        .deleteReceivedMoneyFromServiceById(event.id);
 
     if (dataState is DataSuccess) {
       emit(const ReceivedMoneyFromServiceSuccess());
