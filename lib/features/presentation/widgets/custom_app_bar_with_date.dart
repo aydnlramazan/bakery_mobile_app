@@ -8,7 +8,7 @@ import 'custom_confirmation_dialog.dart';
 class CustomAppBarWithDate extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
-  final String date;
+  final String? date;
   final VoidCallback? onTap;
   final List<PopupMenuItem<String>> additionalMenuItems;
   final Function(String)? onMenuItemSelected;
@@ -43,10 +43,10 @@ class CustomAppBarWithDate extends StatelessWidget
           const SizedBox(
             height: 10,
           ),
-          GestureDetector(
+          if(date != null) GestureDetector(
             onTap: onTap,
             child: Text(
-              date,
+              date!,
               style: const TextStyle(color: Colors.white),
             ),
           )

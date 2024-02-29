@@ -16,18 +16,20 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._authApiService);
 
   @override
-  Future<DataState<UserEntity>> userLogin(
+  Future<DataState<UserEntity?>> userLogin(
       UserLoginParams? userLoginParams) async {
     try {
-
-
       final httpResponse = await _authApiService.loginUser(
           userName: userLoginParams!.userName,
           password: userLoginParams.password);
+
+  print("auth request response: ${httpResponse.response.statusCode}");
+
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        UserPreferences.saveUser(httpResponse.data);
-        return DataSuccess(httpResponse.data);
+        UserPreferences.saveUser(httpResponse.data!);
+        return DataSuccess(httpResponse.data!);
       } else {
+      
         return DataFailed(
           DioException(
               error: httpResponse.response.statusMessage,

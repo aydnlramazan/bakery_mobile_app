@@ -42,12 +42,14 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
 import 'features/data/data_sources/remote/bread_counting_service.dart';
+import 'features/data/data_sources/remote/cash_counting_service.dart';
 import 'features/data/data_sources/remote/product_counting_service.dart';
 import 'features/data/data_sources/remote/received_money_from_service_service.dart';
 import 'features/data/data_sources/remote/service_stale_product_service.dart';
 import 'features/data/data_sources/remote/service_stale_service.dart';
 import 'features/data/data_sources/remote/stale_product_service.dart';
 import 'features/data/repositories/bread_counting_repository_impl.dart';
+import 'features/data/repositories/cash_counting_repository_impl.dart';
 import 'features/data/repositories/expense_repository_impl.dart';
 import 'features/data/repositories/given_product_to_service_repository_impl.dart';
 import 'features/data/repositories/product_counting_repository_impl.dart';
@@ -59,6 +61,7 @@ import 'features/data/repositories/service_stale_repository_impl.dart';
 import 'features/data/repositories/stale_bread_repository_impl.dart';
 import 'features/data/repositories/stale_product_repository_impl.dart';
 import 'features/domain/repositories/bread_counting_repository.dart';
+import 'features/domain/repositories/cash_counting_repository.dart';
 import 'features/domain/repositories/given_product_to_service_repository.dart';
 import 'features/domain/repositories/product_counting_repository.dart';
 import 'features/domain/repositories/received_money_from_service_repository.dart';
@@ -68,6 +71,7 @@ import 'features/domain/repositories/service_stale_repository.dart';
 import 'features/domain/repositories/stale_bread_repository.dart';
 import 'features/domain/repositories/stale_product_repository.dart';
 import 'features/domain/usecases/bread_counting_usecase.dart';
+import 'features/domain/usecases/cash_counting_usecase.dart';
 import 'features/domain/usecases/product_counting_usecase.dart';
 import 'features/domain/usecases/received_money_from_service_usecase.dart';
 import 'features/domain/usecases/service_debt_usecase.dart';
@@ -142,6 +146,9 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<BreadCountingRepository>(BreadCountingRepositoryImpl(sl()));
     sl.registerSingleton<ProductCountingService>(ProductCountingService(sl(), sl()));
   sl.registerSingleton<ProductCountingRepository>(ProductCountingRepositoryImpl(sl()));
+ sl.registerSingleton<CashCountingService>(CashCountingService(sl(), sl()));
+  sl.registerSingleton<CashCountingRepository>(CashCountingRepositoryImpl(sl()));
+
 
   // Usecases
   sl.registerSingleton<AuthUseCase>(AuthUseCase(sl()));
@@ -162,6 +169,8 @@ Future<void> initializeDependencies() async {
       ReceivedMoneyFromServiceUseCase(sl()));
   sl.registerSingleton<BreadCountingUseCase>(BreadCountingUseCase(sl()));
    sl.registerSingleton<ProductCountingUseCase>(ProductCountingUseCase(sl()));
+   sl.registerSingleton<CashCountingUseCase>(CashCountingUseCase(sl()));
+
 
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(sl()));
@@ -193,8 +202,7 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<StaleBreadProductsBloc>(
       () => StaleBreadProductsBloc(sl()));
   sl.registerFactory<StaleProductBloc>(() => StaleProductBloc(sl()));
-  sl.registerFactory<StaleProductProductsBloc>(
-      () => StaleProductProductsBloc(sl()));
+  sl.registerFactory<StaleProductProductsBloc>( () => StaleProductProductsBloc(sl()));
   sl.registerFactory<ReceivedMoneyFromServiceBloc>(() => ReceivedMoneyFromServiceBloc(sl()));
   sl.registerFactory<BreadCountingBloc>(() => BreadCountingBloc(sl()));
   sl.registerFactory<ProductCountingAddedBloc>(() => ProductCountingAddedBloc(sl()));

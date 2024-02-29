@@ -8,7 +8,7 @@ class AuthUseCase  {
   AuthUseCase(this._authRepository);
 
 
-  Future<DataState<UserEntity>> userLogin({UserLoginParams? params}) async{
+  Future<DataState<UserEntity?>> userLogin({UserLoginParams? params}) async{
     return await _authRepository.userLogin(params);
   }
 }

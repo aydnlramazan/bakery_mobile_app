@@ -1,4 +1,5 @@
 import 'package:bakery_app/core/constants/global_variables.dart';
+import 'package:bakery_app/core/utils/is_today_check.dart';
 import 'package:bakery_app/core/utils/user_login_params.dart';
 import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
@@ -39,15 +40,13 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
+            isAdminCheck(state.user!.token!);
             _determineHomePage(state.user!);
           }
 
           if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  state.error as String,
-                ),
+              SnackBar(content: Text(state.error as String,),
               ),
             );
           }

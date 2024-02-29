@@ -6,11 +6,7 @@ class UserModel extends UserEntity {
     String? name,
     int? operationClaimId,
     String ? token,
-  }) : super(
-          id: id,
-          name: name,
-          operationClaim: operationClaimId,
-          token: token
+  }) : super(id: id,name: name,operationClaim: operationClaimId,token: token
         );
 
   factory UserModel.fromJson(Map<String, dynamic> map) {

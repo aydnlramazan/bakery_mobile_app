@@ -28,6 +28,7 @@ import 'features/presentation/pages/dough/bloc/dough_lists/dough_factory_bloc.da
 import 'features/presentation/pages/dough/bloc/dough_products/dough_products_bloc.dart';
 import 'features/presentation/pages/production/bloc/added_products/added_product_bloc.dart';
 import 'features/presentation/pages/production/bloc/products/product_bloc.dart';
+import 'features/presentation/pages/sell_assistance/bloc/bloc/cash_counting_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/expense/expense_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/product_counting_added/product_counting_added_bloc.dart';
 import 'features/presentation/pages/sell_assistance/bloc/product_counting_not_added/product_counting_not_added_bloc.dart';
@@ -137,6 +138,9 @@ class MyApp extends StatelessWidget {
         ),
            BlocProvider<ProductCountingNotAddedBloc>(
           create: (context) => ProductCountingNotAddedBloc(sl()),
+        ),
+             BlocProvider<CashCountingBloc>(
+          create: (context) => CashCountingBloc(sl()),
         ),
       ],
       child: MaterialApp(

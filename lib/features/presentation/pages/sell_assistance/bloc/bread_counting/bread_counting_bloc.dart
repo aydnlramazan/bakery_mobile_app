@@ -13,13 +13,11 @@ part 'bread_counting_state.dart';
 
 class BreadCountingBloc extends Bloc<BreadCountingEvent, BreadCountingState> {
   final BreadCountingUseCase _breadCountingUseCase;
-  BreadCountingBloc(this._breadCountingUseCase) : super(const BreadCountingLoading()) { on<BreadCountingGetListRequested>(
-        onGetBreadCountingList);
+  BreadCountingBloc(this._breadCountingUseCase) : super(const BreadCountingLoading()) { 
+    on<BreadCountingGetListRequested>(onGetBreadCountingList);
     on<BreadCountingPostRequested>(onPostBreadCounting);
-    on<BreadCountingUpdateRequested>(
-        onUpdateBreadCounting);
-    on<BreadCountingDeleteRequested>(
-        onDeleteBreadCounting);
+    on<BreadCountingUpdateRequested>(onUpdateBreadCounting);
+    on<BreadCountingDeleteRequested>(onDeleteBreadCounting);
   }
   void onGetBreadCountingList(
       BreadCountingGetListRequested event,

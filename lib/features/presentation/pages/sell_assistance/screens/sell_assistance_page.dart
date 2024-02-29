@@ -6,6 +6,7 @@ import 'package:bakery_app/features/data/models/stale_product_added.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/bread_counting/bread_counting_bloc.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/bloc/product_counting_added/product_counting_added_bloc.dart';
+import 'package:bakery_app/features/presentation/widgets/custom_cash_counting_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -24,6 +25,7 @@ import '../../../../../core/constants/global_variables.dart';
 import '../../../../../core/utils/is_today_check.dart';
 import '../../../../../core/utils/toast_message.dart';
 import '../../../../data/models/bread_counting.dart';
+import '../../../../data/models/cash_counting.dart';
 import '../../../../data/models/product_not_added.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../../../widgets/custom_confirmation_dialog.dart';
@@ -31,6 +33,7 @@ import '../../../widgets/custom_payment_dialog.dart';
 import '../../../widgets/empty_content.dart';
 import '../../../widgets/error_animation.dart';
 import '../../../widgets/loading_indicator.dart';
+import '../bloc/bloc/cash_counting_bloc.dart';
 import '../bloc/expense/expense_bloc.dart';
 import '../bloc/product_counting_not_added/product_counting_not_added_bloc.dart';
 import '../bloc/received_money_from_service/received_money_from_service_bloc.dart';
@@ -53,6 +56,11 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
   static String date = "Bugün";
   static bool todayDate = true;
 
+@override
+  void initState() {
+    super.initState();
+     isAdminCheck(widget.user.token!);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,9 +156,11 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showAddedProductCountingList(2);
               },
-              onAdd: todayDate ? () {
+              onAdd: todayDate
+                  ? () {
                       _showProductCountingNotAddedList(2);
-                    } : null),
+                    }
+                  : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -159,12 +169,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           ),
           CustomSellListTile(
               title: 'Dışardan Alınan',
-              onShowDetails:  () {
+              onShowDetails: () {
                 _showAddedProductCountingList(3);
               },
-              onAdd: todayDate ? () {
+              onAdd: todayDate
+                  ? () {
                       _showProductCountingNotAddedList(3);
-                    } : null),
+                    }
+                  : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -174,19 +186,14 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           // -------NEED TO BE DONE--------
           CustomSellListTile(
               title: 'Kasa',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null),
-          const Divider(
-            height: 1,
-            color: Colors.white,
-            indent: 10,
-            endIndent: 10,
-          ),
-          // -------NEED TO BE DONE--------
-          CustomSellListTile(
-              title: 'Kredi Kart',
-              onShowDetails: _showExpenseList,
-              onAdd: todayDate ? _addExpense : null)
+              onShowDetails: () {
+                _updateCashCountingDialog("Kasa Sayımı Güncelleme");
+              },
+              onAdd: todayDate
+                  ? () {
+                      _addCashCountingDialog("Kasa Sayımı");
+                    }
+                  : null),
         ],
       ),
     );
@@ -1514,7 +1521,9 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                           .productCountingAddedList![index]
                                           .quantity
                                           .toString()),
-                                          Text(getFormattedDateTime(state.productCountingAddedList![index].date)),
+                                      Text(getFormattedDateTime(state
+                                          .productCountingAddedList![index]
+                                          .date)),
                                     ],
                                   ),
                                   trailing: todayDate
@@ -1587,15 +1596,98 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                 context
                     .read<ProductCountingAddedBloc>()
                     .add(UpdateProductCountingAddedRequested(
-                        productCountingAddedModel: ProductCountingAddedModel(
+                      productCountingAddedModel: ProductCountingAddedModel(
                           id: productCountingAdded.id,
                           productName: productCountingAdded.productName,
                           quantity: amount,
                           productId: productCountingAdded.productId,
-                          date: productCountingAdded.date
-                        ),
-                       ));
+                          date: productCountingAdded.date),
+                    ));
               });
+        });
+  }
+
+  _addCashCountingDialog(String title) {
+    context
+        .read<CashCountingBloc>()
+        .add(CashCountingGetListRequested(date: selectedDate!));
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<CashCountingBloc, CashCountingState>(
+              builder: ((context, state) {
+            return switch (state) {
+              CashCountingLoading() => const LoadingIndicator(),
+              CashCountingFailure() => const ErrorAnimation(),
+              CashCountingSuccess() => state.cashCounting != null
+                  ? CustomConfirmationDialog(
+                      title: "Uyarı",
+                      onTap: () {},
+                      content: "Kasa sayımı yapılmış!")
+                  : CustomCashCountingDialog(
+                      title: title,
+                      totalController: TextEditingController(),
+                      creditcartController: TextEditingController(),
+                      reminedController: TextEditingController(),
+                      onSave: (totalCash, reminedCash, creditcard) {
+                        context.read<CashCountingBloc>().add(
+                            CashCountingPostRequested(
+                                cashCounting: CashCountingModel(
+                                    id: 0,
+                                    creditCard: creditcard,
+                                    totalMoney: totalCash,
+                                    remainedMoney: reminedCash,
+                                    date: selectedDate!)));
+                      })
+            };
+          }));
+        });
+  }
+
+  _updateCashCountingDialog(String title) {
+    context
+        .read<CashCountingBloc>()
+        .add(CashCountingGetListRequested(date: selectedDate!));
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return BlocBuilder<CashCountingBloc, CashCountingState>(
+              builder: ((context, state) {
+            return switch (state) {
+              CashCountingLoading() => const LoadingIndicator(),
+              CashCountingFailure() => const ErrorAnimation(),
+              CashCountingSuccess() => state.cashCounting == null
+                  ? CustomConfirmationDialog(
+                      title: "Uyarı",
+                      onTap: () {},
+                      content: "Kasa sayımı daha yapılmadı!")
+                  : CustomCashCountingDialog(
+                      title: title,
+                      totalController: TextEditingController(
+                          text: state.cashCounting!.totalMoney.toString()),
+                      creditcartController: TextEditingController(
+                          text: state.cashCounting!.creditCard.toString()),
+                      reminedController: TextEditingController(
+                          text: state.cashCounting!.remainedMoney.toString()),
+                      onSave: (totalCash, reminedCash, creditcard) {
+                        if (totalCash == state.cashCounting!.totalMoney &&
+                            state.cashCounting!.remainedMoney == reminedCash &&
+                            creditcard == state.cashCounting!.creditCard) {
+                          return;
+                        }
+                        context.read<CashCountingBloc>().add(
+                            CashCountingUpdateRequested(
+                                cashCounting: CashCountingModel(
+                                    id: state.cashCounting!.id,
+                                    creditCard: creditcard,
+                                    totalMoney: totalCash,
+                                    remainedMoney: reminedCash,
+                                    date: state.cashCounting!.date)));
+                      })
+            };
+          }));
         });
   }
 }
