@@ -10,29 +10,31 @@ import 'package:bakery_app/features/presentation/widgets/loading_indicator.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/utils/is_today_check.dart';
+import '../../../../data/models/user.dart';
 import '../../../widgets/empty_content.dart';
 import '../bloc/dough_lists/dough_factory_bloc.dart';
 
 class DoughListPage extends StatefulWidget {
   static const String routeName = "dough-list-page";
-
-  const DoughListPage({super.key});
+  final UserModel user;
+  const DoughListPage({super.key, required this.user});
 
   @override
   State<DoughListPage> createState() => _DoughListPageState();
 }
 
 class _DoughListPageState extends State<DoughListPage> {
-  static String date = "Bugün";
+  static String? date = "Bugün";
   static bool todayDate = true;
   static DateTime? selectedDate = DateTime.now();
+  static bool isAdmin = false;
 
   @override
   void initState() {
     super.initState();
-    context
-        .read<DoughFactoryBloc>()
-        .add(DoughGetListsRequested(dateTime: selectedDate!));
+    isAdmin = isAdminCheck(widget.user.token!);
+    date = isAdmin ? "Bugün" : null;
+    context.read<DoughFactoryBloc>().add(DoughGetListsRequested(dateTime: selectedDate!));
   }
 
   @override
@@ -78,9 +80,8 @@ class _DoughListPageState extends State<DoughListPage> {
                         subtitle: Text(
                           getFormattedDateTime(state.doughLists![index].date!),
                         ),
-                        onTap: () async {
-                          bool result =
-                              await canEdit(state.doughLists![index].userId!);
+                        onTap: ()  {
+                          bool result = canEdit(state.doughLists![index].userId!);
                           Navigator.pushNamed(
                               context, DoughProductPage.routeName, arguments: {
                             0: state.doughLists![index].id,
@@ -97,8 +98,8 @@ class _DoughListPageState extends State<DoughListPage> {
   }
 
   _buildFloatingButton() {
-    // TODO if the user is admin should make changes
-    if (todayDate) {
+    
+    if (todayDate || isAdmin) {
       return FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, DoughProductPage.routeName, arguments: {
@@ -165,9 +166,8 @@ class _DoughListPageState extends State<DoughListPage> {
         newDate.day == selectedDate!.day;
   }
 
-  Future<bool> canEdit(int userId) async {
-    //TODO if the user is admin should do the process any time
-    var user = await UserPreferences.getUser();
-    return user!.id == userId && isToday(selectedDate!);
+ bool canEdit(int userId) {
+   
+    return (widget.user.id == userId && isToday(selectedDate!)) || isAdmin;
   }
 }

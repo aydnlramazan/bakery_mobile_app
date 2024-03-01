@@ -25,16 +25,18 @@ import '../../../widgets/loading_indicator.dart';
 class ProductionPage extends StatefulWidget {
   static const String routeName = "production-page";
   final UserModel user;
-  const ProductionPage({super.key, required this.user});
+  final int? categoryId;
+  const ProductionPage({super.key, required this.user, this.categoryId});
 
   @override
   State<ProductionPage> createState() => _ProductionPageState();
 }
 
 class _ProductionPageState extends State<ProductionPage> {
-  static String date = "Bugün";
+  static String? date = "Bugün";
   static bool todayDate = true;
   static DateTime? selectedDate = DateTime.now();
+  static bool isAdmin = false;
   int categoryId = 1;
   late UserModel user;
   final List<ProductToAddModel> listToPost = List.empty(growable: true);
@@ -42,10 +44,15 @@ class _ProductionPageState extends State<ProductionPage> {
   @override
   void initState() {
     super.initState();
-
     user = widget.user;
-    categoryId = user.operationClaim!;
-    _setPageTitle(categoryId);
+    isAdmin = isAdminCheck(user.token!);
+    date = isAdmin ? "Bugün" : null;
+    if (widget.categoryId != null) {
+      categoryId = widget.categoryId!;
+      _setPageTitleAndCategoryId(categoryId);
+    } else {
+      _setPageTitleAndCategoryIdByoperationClaimId(user.operationClaim!);
+    }
   }
 
   @override
@@ -58,7 +65,7 @@ class _ProductionPageState extends State<ProductionPage> {
   }
 
   _buildBody() {
-    if (todayDate) {
+    if (todayDate || isAdmin) {
       return LayoutBuilder(builder: (context, constraints) {
         double screenHeight = constraints.maxHeight;
         double sectionHeight = screenHeight * 0.46;
@@ -240,7 +247,10 @@ class _ProductionPageState extends State<ProductionPage> {
   _saveNewProducts() async {
     if (listToPost.isNotEmpty) {
       context.read<AddedProductBloc>().add(PostAddedProductRequested(
-          products: listToPost, userId: user.id!, categoryId: categoryId, date: selectedDate!));
+          products: listToPost,
+          userId: user.id!,
+          categoryId: categoryId,
+          date: selectedDate!));
     } else {
       showToastMessage("Yeni ürün eklemelisiniz!");
     }
@@ -268,25 +278,31 @@ class _ProductionPageState extends State<ProductionPage> {
                           index: index));
                 }
               },
-                 title: "Güncelleme",
-              content: "${addedProductModel.productName!} adedini güncellemek için emin misiniz?"
-            );
+              title: "Güncelleme",
+              content:
+                  "${addedProductModel.productName!} adedini güncellemek için emin misiniz?");
         });
   }
 
   _removeAddedProduct(BuildContext context, AddedProductModel addedProduct) {
- showDialog(
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomConfirmationDialog(
               title: 'Silme',
-              content:'${addedProduct.productName}\'in listeden silmek için emin misiniz?',
+              content:
+                  '${addedProduct.productName}\'in listeden silmek için emin misiniz?',
               onTap: () {
-                   context.read<AddedProductBloc>().add(RemoveAddedProductRequested(product: addedProduct));
-                   context.read<ProductBloc>().add(AddProductRequested(product: ProductModel(id: addedProduct.productId, name: addedProduct.productName)));
+                context
+                    .read<AddedProductBloc>()
+                    .add(RemoveAddedProductRequested(product: addedProduct));
+                context.read<ProductBloc>().add(AddProductRequested(
+                    product: ProductModel(
+                        id: addedProduct.productId,
+                        name: addedProduct.productName)));
               });
         });
- }
+  }
 
   _addProductToAddedList(
       BuildContext context, ProductModel productModel, int quantity) {
@@ -346,15 +362,13 @@ class _ProductionPageState extends State<ProductionPage> {
     }
   }
 
-
-
   bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&
         newDate.month == selectedDate!.month &&
         newDate.day == selectedDate!.day;
   }
 
-  _setPageTitle(int operationClaimId) {
+  _setPageTitleAndCategoryIdByoperationClaimId(int operationClaimId) {
     switch (operationClaimId) {
       case 2:
         {
@@ -366,10 +380,22 @@ class _ProductionPageState extends State<ProductionPage> {
           pageTitle = 'Hamur işi';
           categoryId = 2;
         }
-        case 5:{
+      case 5:
+        {
           pageTitle = 'Dışardan Alınan Ürünler';
           categoryId = 3;
         }
+    }
+  }
+
+  _setPageTitleAndCategoryId(int categoryId) {
+    switch (categoryId) {
+      case 1:
+        pageTitle = 'Pastane';
+      case 2:
+        pageTitle = 'Hamur işi';
+      case 3:
+        pageTitle = 'Dışardan Alınan Ürünler';
     }
   }
 }

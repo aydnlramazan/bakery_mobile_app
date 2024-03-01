@@ -17,8 +17,8 @@ import '../../../widgets/not_paid_market.dart';
 
 class ServiceAccountPage extends StatelessWidget {
   static const String routeName = "service-account-page";
-  static DateTime today = DateTime.now();
-  const ServiceAccountPage({super.key});
+  final DateTime date;
+  const ServiceAccountPage({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class ServiceAccountPage extends StatelessWidget {
   }
 
   _getNotPaidMarkets(BuildContext context) {
-    context.read<ServiceAccountLeftBloc>().add(ServiceGetAccountLeftRequested(date: today));
+    context.read<ServiceAccountLeftBloc>().add(ServiceGetAccountLeftRequested(date: date));
 
     return BlocBuilder<ServiceAccountLeftBloc, ServiceAccountLeftState>(
         builder: ((context, state) {
@@ -131,7 +131,7 @@ class ServiceAccountPage extends StatelessWidget {
   }
 
   _getPaidMarkets(BuildContext context) {
-    context.read<ServiceAccountReceivedBloc>().add(ServiceGetAccountReceivedRequested(date: today));
+    context.read<ServiceAccountReceivedBloc>().add(ServiceGetAccountReceivedRequested(date: date));
     return BlocBuilder<ServiceAccountReceivedBloc, ServiceAccountReceivedState>(
         builder: ((context, state) {
       return switch (state) {

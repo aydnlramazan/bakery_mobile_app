@@ -17,8 +17,8 @@ import '../bloc/service_stale_received/service_stale_received_bloc.dart';
 
 class ServiceStalePage extends StatelessWidget {
   static const String routeName = "service-stale-page";
-  const ServiceStalePage({super.key});
-  static DateTime today = DateTime.now();
+  final DateTime date;
+  const ServiceStalePage({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,9 @@ class ServiceStalePage extends StatelessWidget {
 
   _getNotReceivedStaleMarkets(BuildContext context) {
     List<TextEditingController> controllers = List.empty(growable: true);
-    context.read<ServiceStaleLeftBloc>().add(ServiceGetStaleLeftRequested(date: today));
+    context
+        .read<ServiceStaleLeftBloc>()
+        .add(ServiceGetStaleLeftRequested(date: date));
 
     return BlocBuilder<ServiceStaleLeftBloc, ServiceStaleLeftState>(
         builder: ((context, state) {
@@ -111,7 +113,7 @@ class ServiceStalePage extends StatelessWidget {
   _getReceivedStaleMarkets(BuildContext context) {
     context
         .read<ServiceStaleReceivedBloc>()
-        .add(ServiceGetReceivedStaleRequested(date: today));
+        .add(ServiceGetReceivedStaleRequested(date: date));
     return BlocBuilder<ServiceStaleReceivedBloc, ServiceStaleReceivedState>(
         builder: ((context, state) {
       return switch (state) {
@@ -198,7 +200,8 @@ class ServiceStalePage extends StatelessWidget {
               content:
                   '${serviceReceivedStaleModel.marketName} marketten alınan bayatlerı silmek için emin misiniz?',
               onTap: () {
-                context.read<ServiceStaleReceivedBloc>().add(ServiceRemoveReceivedStaleRequested(
+                context.read<ServiceStaleReceivedBloc>().add(
+                    ServiceRemoveReceivedStaleRequested(
                         context: context,
                         serviceReceivedStaleModel: serviceReceivedStaleModel));
               });

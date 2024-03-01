@@ -53,14 +53,17 @@ class SellAssistancePage extends StatefulWidget {
 
 class _SellAssistancePageState extends State<SellAssistancePage> {
   static DateTime? selectedDate = DateTime.now();
-  static String date = "Bugün";
+  static String? date;
   static bool todayDate = true;
+  static bool isAdmin = false;
 
-@override
+  @override
   void initState() {
     super.initState();
-     isAdminCheck(widget.user.token!);
+    isAdmin = isAdminCheck(widget.user.token!);
+    date = isAdmin ? "Bugün" : null;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +127,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _updateBreadCounting(selectedDate!);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _addBreadCountingDialog(selectedDate!);
                     }
@@ -140,7 +143,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showAddedProductCountingList(1);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _showProductCountingNotAddedList(1);
                     }
@@ -156,7 +159,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showAddedProductCountingList(2);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _showProductCountingNotAddedList(2);
                     }
@@ -172,7 +175,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showAddedProductCountingList(3);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _showProductCountingNotAddedList(3);
                     }
@@ -189,7 +192,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _updateCashCountingDialog("Kasa Sayımı Güncelleme");
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _addCashCountingDialog("Kasa Sayımı");
                     }
@@ -216,7 +219,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           CustomSellListTile(
               title: 'Ekmek',
               onShowDetails: _showStaleBreadList,
-              onAdd: todayDate ? _showStaleBreadProductList : null),
+              onAdd: todayDate || isAdmin ? _showStaleBreadProductList : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -228,7 +231,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showStaleAddedProductList(1);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _showStaleProductList(1);
                     }
@@ -244,7 +247,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showStaleAddedProductList(2);
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _showStaleProductList(2);
                     }
@@ -273,7 +276,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
               onShowDetails: () {
                 _showGivenProductToServiceList(1);
               },
-              onAdd: todayDate ? () => _addGivenProductToService(1) : null),
+              onAdd: todayDate || isAdmin ? () => _addGivenProductToService(1) : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -283,7 +286,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           CustomSellListTile(
               title: 'Getir',
               onShowDetails: () => _showGivenProductToServiceList(2),
-              onAdd: todayDate ? () => _addGivenProductToService(2) : null),
+              onAdd: todayDate || isAdmin ? () => _addGivenProductToService(2) : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -293,7 +296,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
           CustomSellListTile(
               title: 'Alınan Bayat',
               onShowDetails: _showServiceStaleProductList,
-              onAdd: todayDate ? _addServiceStaleProduct : null),
+              onAdd: todayDate || isAdmin ? _addServiceStaleProduct : null),
           const Divider(
             height: 1,
             color: Colors.white,
@@ -306,7 +309,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                 _updateReceivedPaymentFromService(1,
                     "Servisten alınan parayı güncellemek için emin misiniz?");
               },
-              onAdd: todayDate
+              onAdd: todayDate || isAdmin
                   ? () {
                       _addReceivedPaymentFromServiceDialog(
                           1, "Servisten alınan para");
@@ -327,7 +330,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
         child: CustomSellListTile(
             title: 'Gider',
             onShowDetails: _showExpenseList,
-            onAdd: todayDate ? _addExpense : null));
+            onAdd: todayDate || isAdmin ? _addExpense : null));
   }
 
   Future<void> _selectDate() async {
@@ -420,12 +423,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       .toString()),
                                   subtitle: Text(getFormattedDateTime(state
                                       .givenProductToServiceList![index].date)),
-                                  trailing: todayDate &&
-                                          widget.user.id ==
-                                              state
-                                                  .givenProductToServiceList![
-                                                      index]
-                                                  .userId
+                                  trailing: (todayDate  && widget.user.id ==state.givenProductToServiceList![index].userId) || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -555,9 +553,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                           state.expenseList![index].date)),
                                     ],
                                   ),
-                                  trailing: todayDate &&
-                                          widget.user.id ==
-                                              state.expenseList![index].userId
+                                  trailing: (todayDate &&widget.user.id ==state.expenseList![index].userId) || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -699,12 +695,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       .toString()),
                                   subtitle: Text(getFormattedDateTime(state
                                       .serviceStaleProductList![index].date)),
-                                  trailing: todayDate &&
-                                          widget.user.id ==
-                                              state
-                                                  .serviceStaleProductList![
-                                                      index]
-                                                  .userId
+                                  trailing: (todayDate &&widget.user.id ==state.serviceStaleProductList![index].userId) || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -856,7 +847,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                           state.staleBreadList![index].date)),
                                     ],
                                   ),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -976,7 +967,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       : GlobalVariables.evenItemColor,
                                   title: Text(state
                                       .staleBreadProductsList![index].name),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? IconButton(
                                           onPressed: () {
                                             _addStaleBreadProduct(
@@ -1064,7 +1055,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                           .staleAddedProductList![index].date)),
                                     ],
                                   ),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -1182,7 +1173,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       : GlobalVariables.evenItemColor,
                                   title: Text(
                                       state.staleProductsList![index].name!),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? IconButton(
                                           onPressed: () {
                                             _addStaleProduct(state
@@ -1435,7 +1426,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                       : GlobalVariables.evenItemColor,
                                   title: Text(
                                       state.productNotAddedList![index].name!),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? IconButton(
                                           onPressed: () {
                                             _addProductCounting(state
@@ -1526,7 +1517,7 @@ class _SellAssistancePageState extends State<SellAssistancePage> {
                                           .date)),
                                     ],
                                   ),
-                                  trailing: todayDate
+                                  trailing: todayDate || isAdmin
                                       ? Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [

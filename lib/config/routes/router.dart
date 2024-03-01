@@ -1,4 +1,5 @@
 import 'package:bakery_app/features/data/models/user.dart';
+import 'package:bakery_app/features/presentation/pages/admin/pages/admin_page.dart';
 import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_product_page.dart';
@@ -16,14 +17,22 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
     case LoginPage.routeName:
       return MaterialPageRoute(settings: routeSettings, builder: (_) => const LoginPage());
-     case SellAssistancePage.routeName:
+    case SellAssistancePage.routeName:
      var args = routeSettings.arguments as UserModel;
       return MaterialPageRoute(settings: routeSettings, builder: (_) =>  SellAssistancePage(user: args,));
     case ProductionPage.routeName:
-      var args = routeSettings.arguments as UserModel;
+      var args = routeSettings.arguments as Map<int, dynamic>;
       return MaterialPageRoute(
           settings: routeSettings,
           builder: (_) => ProductionPage(
+                user: args[0],
+                categoryId: args[1],
+              ));
+    case AdminPage.routeName:
+      var args = routeSettings.arguments as UserModel;
+      return MaterialPageRoute(
+          settings: routeSettings,
+          builder: (_) => AdminPage(
                 user: args,
               ));
     case ServiceMarketsPage.routeName:
@@ -35,17 +44,19 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
                 canEdit: args[1],
               ));
     case ServiceAccountPage.routeName:
-      return MaterialPageRoute(
-          settings: routeSettings, builder: (_) => const ServiceAccountPage());
+    var args = routeSettings.arguments as DateTime;
+      return MaterialPageRoute(settings: routeSettings, builder: (_) => ServiceAccountPage(date: args,));
     case ServiceListPage.routeName:
-      return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceListPage());
+      var args = routeSettings.arguments as UserModel;
+      return MaterialPageRoute(settings: routeSettings, builder: (_) =>  ServiceListPage(user: args,));
     case ServiceStalePage.routeName:
-      return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceStalePage());  
+    var args = routeSettings.arguments as DateTime;
+      return MaterialPageRoute(settings: routeSettings, builder: (_) =>  ServiceStalePage(date: args,));  
     case ServiceDebtPage.routeName:
       return MaterialPageRoute(settings: routeSettings, builder: (_) => const ServiceDebtPage());  
     case DoughListPage.routeName:
-      return MaterialPageRoute(
-          settings: routeSettings, builder: (_) => const DoughListPage());
+    var args = routeSettings.arguments as UserModel;
+    return MaterialPageRoute(settings: routeSettings, builder: (_) =>  DoughListPage(user: args,));
     case DoughProductPage.routeName:
       var args = routeSettings.arguments as Map<int, dynamic>;
       return MaterialPageRoute(

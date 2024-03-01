@@ -23,6 +23,7 @@ class CustomAppBarWithDate extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      iconTheme: const IconThemeData(color: Colors.white),
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           color: GlobalVariables.secondaryColor,
@@ -40,16 +41,18 @@ class CustomAppBarWithDate extends StatelessWidget
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          if(date != null) GestureDetector(
-            onTap: onTap,
-            child: Text(
-              date!,
-              style: const TextStyle(color: Colors.white),
+          if (date != null)
+            const SizedBox(
+              height: 10,
             ),
-          )
+          if (date != null)
+            GestureDetector(
+              onTap: onTap,
+              child: Text(
+                date!,
+                style: const TextStyle(color: Colors.white),
+              ),
+            )
         ],
       ),
       actions: [
@@ -67,9 +70,7 @@ class CustomAppBarWithDate extends StatelessWidget
             if (value == 'logout') {
               _logoutUser(context);
             } else {
-
               onMenuItemSelected!(value);
-              
             }
           },
         ),

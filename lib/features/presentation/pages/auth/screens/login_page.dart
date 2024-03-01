@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:bakery_app/core/constants/global_variables.dart';
 import 'package:bakery_app/core/utils/is_today_check.dart';
 import 'package:bakery_app/core/utils/user_login_params.dart';
 import 'package:bakery_app/features/data/models/user.dart';
+import 'package:bakery_app/features/presentation/pages/admin/pages/admin_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
 import 'package:bakery_app/features/presentation/pages/production/screens/production_page.dart';
 import 'package:bakery_app/features/presentation/pages/sell_assistance/screens/sell_assistance_page.dart';
@@ -91,9 +94,6 @@ class _LoginPageState extends State<LoginPage> {
                       text: 'Giriş Yap',
                       onTap: () {
                         if (_signinFormKey.currentState!.validate()) {
-                          print('button: ${_userNameController.text}');
-                          print('button: ${_passwordController.text}');
-
                           context.read<AuthBloc>().add(
                                 AuthLoginRequested(
                                   userLoginParams: UserLoginParams(
@@ -119,21 +119,23 @@ class _LoginPageState extends State<LoginPage> {
   _determineHomePage(UserModel user) {
     switch (user.operationClaim) {
       case 1:
-        _navigateToPage(DoughListPage.routeName, null);
+        _navigateToPage(DoughListPage.routeName, user);
       case 2:
-        _navigateToPage(ProductionPage.routeName, user);
+        _navigateToPage(ProductionPage.routeName, {0:user,1:null});
       case 3:
-        _navigateToPage(ProductionPage.routeName, user);
+        _navigateToPage(ProductionPage.routeName, {0:user,1:null});
       case 4:
-        _navigateToPage(ServiceListPage.routeName, null);
+        _navigateToPage(ServiceListPage.routeName, user);
       case 5:
         _navigateToPage(SellAssistancePage.routeName, user);
+      case 6:
+        _navigateToPage(AdminPage.routeName, user);
       default:
         _navigateToPage(LoginPage.routeName, null);
     }
   }
 
-  _navigateToPage(String routeName, UserModel? args) {
+  _navigateToPage(String routeName, dynamic args) {
     args == null
         ? Navigator.pushNamedAndRemoveUntil(
             context, routeName, (route) => false)

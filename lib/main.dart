@@ -5,6 +5,7 @@ import 'package:bakery_app/config/theme/app_theme.dart';
 import 'package:bakery_app/core/utils/http_overrides.dart';
 import 'package:bakery_app/features/data/data_sources/local/shared_preference.dart';
 import 'package:bakery_app/features/data/models/user.dart';
+import 'package:bakery_app/features/presentation/pages/admin/pages/admin_page.dart';
 
 import 'package:bakery_app/features/presentation/pages/auth/screens/login_page.dart';
 import 'package:bakery_app/features/presentation/pages/dough/screens/dough_list_page.dart';
@@ -166,15 +167,17 @@ class MyApp extends StatelessWidget {
 
     switch (savedUser.operationClaim) {
       case 1:
-        return const DoughListPage();
+        return  DoughListPage(user: savedUser,);
       case 2:
-        return ProductionPage(user: savedUser);
+        return ProductionPage(user: savedUser,);
       case 3:
         return ProductionPage(user: savedUser);
       case 4:
-        return const ServiceListPage();
+        return ServiceListPage(user : savedUser);
       case 5:
         return  SellAssistancePage(user:savedUser);
+      case 6:
+        return  AdminPage(user:savedUser);
       default:
         return const LoginPage();
     }

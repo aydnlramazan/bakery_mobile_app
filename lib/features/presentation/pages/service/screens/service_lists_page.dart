@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:bakery_app/features/data/models/user.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_account_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_debt_page.dart';
 import 'package:bakery_app/features/presentation/pages/service/screens/service_markets_page.dart';
@@ -10,15 +11,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/constants/global_variables.dart';
 import '../../../../../core/utils/is_today_check.dart';
-import '../../../../data/data_sources/local/shared_preference.dart';
 import '../../../widgets/custom_app_bar_with_date.dart';
 import '../bloc/service_lists/service_lists_bloc.dart';
 import 'service_stale_page.dart';
 
 class ServiceListPage extends StatefulWidget {
   static const String routeName = "service-list-page";
+  final UserModel user;
 
-  const ServiceListPage({super.key});
+  const ServiceListPage({super.key, required this.user});
 
   @override
   State<ServiceListPage> createState() => _ServiceListPageState();
@@ -26,14 +27,15 @@ class ServiceListPage extends StatefulWidget {
 
 class _ServiceListPageState extends State<ServiceListPage> {
   static DateTime? selectedDate = DateTime.now();
-  static String date = "Bugün";
+  static String? date = "Bugün";
   static bool todayDate = true;
+  static bool isAdmin = false;
   @override
   void initState() {
     super.initState();
-    context
-        .read<ServiceListsBloc>()
-        .add(ServiceGetListsRequested(dateTime: selectedDate!));
+    isAdmin = isAdminCheck(widget.user.token!);
+    date = isAdmin ? "Bugün" : null;
+    context.read<ServiceListsBloc>().add(ServiceGetListsRequested(dateTime: selectedDate!));
   }
 
   @override
@@ -49,7 +51,6 @@ class _ServiceListPageState extends State<ServiceListPage> {
   _buildBody() {
     return BlocBuilder<ServiceListsBloc, ServiceListsState>(
         builder: (context, state) {
-    
       if (state is ServiceListsLoading) {
         return const LoadingIndicator();
       }
@@ -82,11 +83,10 @@ class _ServiceListPageState extends State<ServiceListPage> {
                       subtitle: Text(
                         getFormattedDateTime(state.serviceLists![index].date!),
                       ),
-                      onTap: () async {
-                        bool result =
-                            await canEdit(state.serviceLists![index].userId!);
+                      onTap: ()  {
+                        bool result = canEdit(state.serviceLists![index].userId!);
                         Navigator.pushNamed(
-                            context, ServiceMarketsPage.routeName, arguments: {
+                          context, ServiceMarketsPage.routeName, arguments: {
                           0: state.serviceLists![index].id,
                           1: result
                         });
@@ -144,8 +144,6 @@ class _ServiceListPageState extends State<ServiceListPage> {
     }
   }
 
-
-
   bool checkDate(DateTime newDate) {
     return newDate.year == selectedDate!.year &&
         newDate.month == selectedDate!.month &&
@@ -153,7 +151,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
   }
 
   _buildFlaotingButtons() {
-    if (todayDate) {
+    if (todayDate || isAdmin) {
       return Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
@@ -162,7 +160,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
             FloatingActionButton(
               heroTag: "Service Account",
               onPressed: () {
-                Navigator.pushNamed(context, ServiceAccountPage.routeName);
+                Navigator.pushNamed(context, ServiceAccountPage.routeName,arguments: selectedDate);
               },
               backgroundColor: GlobalVariables.secondaryColor,
               tooltip: 'Servis Hesabı',
@@ -174,7 +172,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
             FloatingActionButton(
               heroTag: "Service Stale Bread",
               onPressed: () {
-                Navigator.pushNamed(context, ServiceStalePage.routeName);
+                Navigator.pushNamed(context, ServiceStalePage.routeName,arguments: selectedDate);
               },
               backgroundColor: GlobalVariables.secondaryColor,
               tooltip: 'Bayat Ekmek',
@@ -211,8 +209,8 @@ class _ServiceListPageState extends State<ServiceListPage> {
     return null;
   }
 
-  Future<bool> canEdit(int userId) async {
-    var user = await UserPreferences.getUser();
-    return user!.id == userId && isToday(selectedDate!);
+  bool canEdit(int userId)  {
+   
+    return (widget.user.id == userId && isToday(selectedDate!)) || isAdmin;
   }
 }
